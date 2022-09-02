@@ -1,6 +1,7 @@
 import { ormCreateUser as _createUser } from "../model/user-orm.js";
 import { ormCheckUser as _checkUser } from "../model/user-orm.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export async function createUser(req, res) {
 	try {
@@ -54,4 +55,46 @@ export async function createUser(req, res) {
 			.status(500)
 			.json({ message: "Database failure when creating new user!" });
 	}
+}
+
+export async function loginUser(req, res) {
+	try {
+		const { username, password } = req.body;
+		if (username && password) {
+			const user = await _checkUser(username);
+
+			if (!user) {
+				return res.status(409).json({
+					message: "User not found! Try again",
+				});
+			}
+
+			if (user && (await bcrypt.compare(password, user.password))) {
+				res.status(200).json({
+					_id: user.id,
+					name: user.username,
+					token: generateToken(user._id)
+				})
+			} else {
+				res.status(400).json({
+					message: "Wrong Password!"
+				})
+			}
+		} else {
+			res.status(400).json({
+				message: "Invalid Credentials!"
+			})
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ 
+			message: "Unknown Error!" });
+	}
+}
+
+// Generate JWT
+const generateToken = (id) => {
+	return jwt.sign( {id}, process.env.JWT_SECRET, {
+		expiresIn : '30d'
+	})
 }
