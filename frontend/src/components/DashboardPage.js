@@ -1,17 +1,8 @@
 import {
 	Box,
 	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	TextField,
 	Typography,
 } from "@mui/material";
-import { useState } from "react";
-import axios from "axios";
-import { URL_USER_SVC_DASHBOARD } from "../configs";
 import { Link } from "react-router-dom";
 
 function Dashboard() {
