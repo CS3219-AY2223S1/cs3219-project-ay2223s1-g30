@@ -15,6 +15,7 @@ router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
 router.get('/login', (_, res) => res.send('Hello World from login'))
 router.post('/login', loginUser)
+router.get('/dashboard', (_, res) => res.send('Hello World from dashboard'))
 
 app.use('/api/user', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
