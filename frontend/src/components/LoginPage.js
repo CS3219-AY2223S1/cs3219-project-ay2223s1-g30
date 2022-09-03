@@ -34,11 +34,11 @@ function LoginPage() {
             .post(URL_USER_SVC_LOGIN, {username, password})
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
-                    setErrorDialog("No such user name found!");
+                    setErrorDialog("No such username found!");
                 } else if (err.response.status === STATUS_CODE_UNAUTHORIZED) {
                     setErrorDialog("Wrong Password!");
                 } else {
-                    setErrorDialog("Unknown Error, Try again later");
+                    setErrorDialog("Please try again later");
                 }
             });
         if (res && res.status === STATUS_CODE_OKAY) {

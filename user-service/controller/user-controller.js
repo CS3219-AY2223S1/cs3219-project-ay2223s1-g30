@@ -2,6 +2,7 @@ import { ormCreateUser as _createUser } from "../model/user-orm.js";
 import { ormCheckUser as _checkUser } from "../model/user-orm.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import UserModel from "../model/user-model.js";
 
 export async function createUser(req, res) {
 	try {
@@ -83,6 +84,28 @@ export async function loginUser(req, res) {
 		} else {
 			res.status(400).json({
 				message: "Invalid Credentials!"
+			})
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ 
+			message: "Unknown Error!" });
+	}
+}
+
+export async function getMe(req, res) {
+	try {
+		const { username } = req.body
+		const user = await _checkUser(username)
+
+		if (!user) {
+			return res.status(409).json({
+				message: "User not found! Try again",
+			});
+		} else {
+			return res.status(200).json({
+				_id: user.id,
+				name: user.username,
 			})
 		}
 	} catch (err) {
