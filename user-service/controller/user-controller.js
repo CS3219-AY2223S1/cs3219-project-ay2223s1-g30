@@ -26,7 +26,8 @@ export async function createUser(req, res) {
 						1. Be at least 8 characters,
 						2. Contain at least 1 uppercase letter
 						3. Contain at least 1 lowercase letter
-						4. Contain at least 1 special character`,
+						4. Contain at least 1 number
+						5. Contain at least 1 special character`,
 				});
 			}
 
@@ -74,29 +75,30 @@ export async function loginUser(req, res) {
 				res.status(200).json({
 					_id: user.id,
 					name: user.username,
-					token: generateToken(user._id)
-				})
+					token: generateToken(user._id),
+				});
 			} else {
 				res.status(401).json({
-					message: "Wrong Password!"
-				})
+					message: "Wrong Password!",
+				});
 			}
 		} else {
 			res.status(400).json({
-				message: "Invalid Credentials!"
-			})
+				message: "Invalid Credentials!",
+			});
 		}
 	} catch (err) {
 		console.log(err);
-		return res.status(500).json({ 
-			message: "Unknown Error!" });
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
 	}
 }
 
 export async function getMe(req, res) {
 	try {
-		const { username } = req.body
-		const user = await _checkUser(username)
+		const { username } = req.body;
+		const user = await _checkUser(username);
 
 		if (!user) {
 			return res.status(409).json({
@@ -106,18 +108,19 @@ export async function getMe(req, res) {
 			return res.status(200).json({
 				_id: user.id,
 				name: user.username,
-			})
+			});
 		}
 	} catch (err) {
 		console.log(err);
-		return res.status(500).json({ 
-			message: "Unknown Error!" });
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
 	}
 }
 
 // Generate JWT
 const generateToken = (id) => {
-	return jwt.sign( {id}, process.env.JWT_SECRET, {
-		expiresIn : '30d'
-	})
-}
+	return jwt.sign({ id }, process.env.JWT_SECRET, {
+		expiresIn: "30d",
+	});
+};
