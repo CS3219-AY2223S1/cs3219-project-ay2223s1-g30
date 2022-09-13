@@ -4,6 +4,7 @@ import { ormDeleteUser as _deleteUser } from "../model/user-orm.js";
 import { ormUpdateUser as _updateUser } from "../model/user-orm.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import userModel from "../model/user-model.js";
 
 export async function createUser(req, res) {
 	try {
@@ -108,6 +109,7 @@ export async function loginUser(req, res) {
 
 			if (user && (await bcrypt.compare(password, user.password))) {
 				const token = generateToken(user._id);
+				res.cookie('token', token, { httpOnly: true });
 				res.status(200).json({
 					_id: user.id,
 					name: user.username,
@@ -124,7 +126,29 @@ export async function loginUser(req, res) {
 			});
 		}
 	} catch (err) {
-		console.log(err);
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
+	}
+}
+
+export async function logoutUser(req, res) {
+	try {
+		const { username } = req.body;
+		const user = await _checkUser(username);
+
+		if (!user) {
+			return res.status(409).json({
+				message: "User not found! Try again.",
+			});
+		} else {
+			res.clearCookie("token");
+			res.status(200).json({
+				message: "Successfully Logged out user"
+			})
+		}
+	} catch (err) {
+		console.log(err)
 		return res.status(500).json({
 			message: "Unknown Error!",
 		});
@@ -141,17 +165,29 @@ export async function getMe(req, res) {
 				message: "User not found! Try again.",
 			});
 		} else {
+			const token = generateToken(user._id);
+			res.cookie('token', token, { httpOnly: true });
 			return res.status(200).json({
 				_id: user.id,
 				name: user.username,
+				token: token,
 			});
 		}
 	} catch (err) {
-		console.log(err);
 		return res.status(500).json({
 			message: "Unknown Error!",
 		});
 	}
+}
+
+export async function getProtectedMe(req, res) {
+	const {_id, name} = await userModel.findById(req.user.id)
+
+	res.status(200).json({
+		id: _id,
+		name,
+		message: "Successfully verified cookie"
+	})
 }
 
 export async function updateUser(req, res) {
@@ -209,5 +245,5 @@ export async function updateUser(req, res) {
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
 		expiresIn: "30d",
-	});
+	});	
 };

@@ -11,11 +11,15 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { URL_USER_SVC } from "../configs";
+import { 
+	URL_USER_SVC, 
+	URL_USER_SVC_DASHBOARD, 
+	URL_USER_SVC_LOGOUT } from "../configs";
 import {
 	STATUS_CODE_OKAY,
 	STATUS_CODE_CONFLICT,
 	STATUS_CODE_FORBIDDEN,
+	STATUS_CODE_UNAUTHORIZED,
 } from "../constants";
 import { Link } from "react-router-dom";
 
@@ -67,6 +71,36 @@ function Dashboard() {
 		}
 	};
 
+	// Placeholder for functions that need auth
+	const verifyCookie = async () => {
+		const endpoint = URL_USER_SVC_DASHBOARD;
+		const res = await axios.get(endpoint).catch((err) => {
+			if (err.response.status === STATUS_CODE_UNAUTHORIZED) {
+				console.log("No token provided")
+			} else {
+				console.log("Please try again later")
+			}
+		});
+		if (res && res.status === STATUS_CODE_OKAY) {
+			console.log("Successfully Verified Cookie")
+		}
+	}
+
+	const handleLogout = async () => {
+		const endpoint = URL_USER_SVC_LOGOUT;
+		const res = await axios.post(endpoint, {username}).catch((err) => {
+			if (err.response.status === STATUS_CODE_CONFLICT) {
+				setErrorDialog("No such user found!");
+			} else {
+				setErrorDialog("Please try again later");
+			}
+		});
+		if (res && res.status === STATUS_CODE_OKAY) {
+			setUsername(undefined)
+			console.log("Successfully Logged out")
+		}
+	}
+
 	const changingPassword = () => {
 		setIsChangingPassword(true);
 		setIsChangePasswordFail(false);
@@ -74,7 +108,6 @@ function Dashboard() {
 	};
 
 	useEffect(() => {
-		console.log("Fetching user");
 		setUsername(sessionStorage.getItem("username"));
 		if (!(username === "undefined")) {
 			console.log("Fetched user", username);
@@ -100,13 +133,14 @@ function Dashboard() {
 	return (
 		<Box display={"flex"} flexDirection={"column"} width={"100%"}>
 			<Typography variant={"h3"} marginBottom={"2rem"}>
-				Welcome to your dashboard
+				Welcome to your dashboard <code>{username}</code>
 			</Typography>
 			<Button onClick={changingPassword}>Change password</Button>
-			<Button component={Link} to="/login">
+			<Button component= {Link} to="/login" onClick={handleLogout}>
 				Log out
 			</Button>
 			<Button onClick={handleDelete}>Delete account</Button>
+			<Button onClick={verifyCookie}>Verify cookie</Button>
 			<Dialog open={isChangingPassword} onClose={closeDialog}>
 				<DialogTitle>{dialogTitle}</DialogTitle>
 				<DialogContent>
