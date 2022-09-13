@@ -1,8 +1,9 @@
 import { ormCreateUser as _createUser } from "../model/user-orm.js";
 import { ormCheckUser as _checkUser } from "../model/user-orm.js";
+import { ormDeleteUser as _deleteUser } from "../model/user-orm.js";
+import { ormUpdateUser as _updateUser } from "../model/user-orm.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import UserModel from "../model/user-model.js";
 
 export async function createUser(req, res) {
 	try {
@@ -20,6 +21,7 @@ export async function createUser(req, res) {
 				});
 			}
 
+			// Check if password meets password requirements
 			if (len < 8 || !regex.test(password)) {
 				return res.status(403).json({
 					message: `Password needs to:
@@ -59,6 +61,39 @@ export async function createUser(req, res) {
 	}
 }
 
+export async function deleteUser(req, res) {
+	try {
+		const username = req.params.username;
+		if (username) {
+			const user = await _checkUser(username);
+
+			if (!user) {
+				return res.status(409).json({
+					message: "User not found! Failed to delete user.",
+				});
+			} else {
+				const resp = await _deleteUser(username);
+				console.log(resp);
+				if (resp.err) {
+					return res
+						.status(400)
+						.json({ message: "Could not delete user!" });
+				} else {
+					console.log(`Deleted user ${username} successfully!`);
+					return res.status(200).json({
+						message: `Deleted user ${username} successfully!`,
+					});
+				}
+			}
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
+	}
+}
+
 export async function loginUser(req, res) {
 	try {
 		const { username, password } = req.body;
@@ -67,15 +102,16 @@ export async function loginUser(req, res) {
 
 			if (!user) {
 				return res.status(409).json({
-					message: "User not found! Try again",
+					message: "User not found! Try again.",
 				});
 			}
 
 			if (user && (await bcrypt.compare(password, user.password))) {
+				const token = generateToken(user._id);
 				res.status(200).json({
 					_id: user.id,
 					name: user.username,
-					token: generateToken(user._id),
+					token: token,
 				});
 			} else {
 				res.status(401).json({
@@ -102,13 +138,64 @@ export async function getMe(req, res) {
 
 		if (!user) {
 			return res.status(409).json({
-				message: "User not found! Try again",
+				message: "User not found! Try again.",
 			});
 		} else {
 			return res.status(200).json({
 				_id: user.id,
 				name: user.username,
 			});
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
+	}
+}
+
+export async function updateUser(req, res) {
+	try {
+		const { username, password } = req.body;
+		const user = await _checkUser(username);
+
+		if (!user) {
+			return res.status(409).json({
+				message: "User not found! Failed to update user.",
+			});
+		} else {
+			const regex =
+				/^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/;
+			const len = Object.keys(password).length;
+
+			// Check if password meets password requirements
+			if (len < 8 || !regex.test(password)) {
+				return res.status(403).json({
+					message: `Password needs to:
+						1. Be at least 8 characters,
+						2. Contain at least 1 uppercase letter
+						3. Contain at least 1 lowercase letter
+						4. Contain at least 1 number
+						5. Contain at least 1 special character`,
+				});
+			}
+
+			// Hash password
+			const salt = await bcrypt.genSalt(10);
+			const hashedPassword = await bcrypt.hash(password, salt);
+			const resp = await _updateUser(user.id, hashedPassword);
+			console.log(hashedPassword);
+			console.log(resp);
+			if (resp.err) {
+				return res
+					.status(400)
+					.json({ message: "Could not update user!" });
+			} else {
+				console.log(`Updated user ${username} successfully!`);
+				return res.status(200).json({
+					message: `Updated user ${username} successfully!`,
+				});
+			}
 		}
 	} catch (err) {
 		console.log(err);
