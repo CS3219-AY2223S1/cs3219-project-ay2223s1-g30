@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
 var Schema = mongoose.Schema;
 let MatchModelSchema = new Schema({
-    matchId: {
-        type: String,
+    isPendingMatch: {
+        type: Boolean,
         required: true,
-        unique: true,
     },
+    //difficulty: {
+    //    type: String,
+    //    required: false,
+    //},
     user1: {
         type: String,
         required: true,
@@ -13,8 +16,8 @@ let MatchModelSchema = new Schema({
     },
     user2: {
         type: String,
-        required: true,
-        unique: true,
+        required: false,
+        unique: false,
     },
 });
 

@@ -1,9 +1,9 @@
 import { checkMatch, createMatch } from "./repository.js";
 
 //need to separate orm functions from repository to decouple business logic from persistence
-export async function ormCreateMatch(matchId, user1, user2) {
+export async function ormCreateMatch(isPendingMatch, user1, user2) {
     try {
-        const newMatch = await createMatch({ matchId, user1, user2 });
+        const newMatch = await createMatch({ isPendingMatch, user1, user2 });
         newMatch.save();
         return true;
     } catch (err) {
@@ -12,9 +12,10 @@ export async function ormCreateMatch(matchId, user1, user2) {
     }
 }
 
-export async function ormCheckMatch(id) {
+export async function ormCheckMatch(user) {
     try {
-        const matchExist = await checkMatch({ matchId: id });
+        const matchExist = await checkMatch({ user1: user });
+        console.log(`Checking for user: ${user}`);
         return matchExist;
     } catch (err) {
         console.log("ERROR: Could not check for match");
