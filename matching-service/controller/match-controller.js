@@ -60,6 +60,9 @@ export async function createMatch(req, res) {
                     console.log(`Created new complete match between ${currentUser} and ${pendingMatchUser} successfully! (Difficulty: ${difficulty})`);
                     return res.status(201).json({
                         message: `Created new complete match between ${currentUser} and ${pendingMatchUser} successfully! (Difficulty: ${difficulty})`,
+                        user1: currentUser,
+                        user2: pendingMatchUser,
+                        isPendingMatch: false,
                     });
                 }
             } else {
@@ -76,7 +79,8 @@ export async function createMatch(req, res) {
                 } else {
                     console.log(`Created new pendingMatch for ${currentUser} successfully! Difficulty: ${difficulty}`);
                     return res.status(201).json({
-                        message: `Created new match between ${currentUser} and ${user2} successfully! Difficulty: ${difficulty}`,
+                        message: `Created new pendingMatch for ${currentUser} successfully! Difficulty: ${difficulty}`,
+                        isPendingMatch: true,
                     });
                 }
             }
@@ -132,6 +136,9 @@ export async function deleteMatch(req, res) {
                     .json({ message: "Controller ERROR: Could not delete match!" });
             } else {
                 console.log(`Deleted match for ${deleteMatchUser} successfully!`);
+                return res.status(200).json({
+                    message: `Deleted match for ${deleteMatchUser} successfully!`,
+                });
             }
         } else {
             console.log("Controller ERROR: Please provide at least currentUser!");

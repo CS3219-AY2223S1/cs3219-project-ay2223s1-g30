@@ -46,9 +46,18 @@ io.on("connection", (socket) => {
                 console.log(`Axios error in matching-service/index.js (match): ${err}`);
             });
         console.log("Axios complete (match)");
-        //console.log(res2.data); //crashes app if axios.post was unsuccessful
 
-        //socket.emit('matchSuccess', `Created a match object for ${socket.id}`)
+        if (res) {
+            console.log(res.data);
+            if (!res.data.isPendingMatch) {
+                // Send matchSuccess to both users in match
+                socket.emit('matchSuccess', `You were matched successfully!`) //TODO: currently only sends to 2nd user
+            }
+            
+        } else {
+            console.log("Axios: No result data.")
+        }
+
     })
 
     socket.on('leave-match', async (currentUser) => {
@@ -60,9 +69,14 @@ io.on("connection", (socket) => {
                 console.log(`Axios error in matching-service/index.js (leave-match): ${err}`);
             });
         console.log("Axios complete (leave-match)");
-        //console.log(res2.data); //crashes app if axios.post was unsuccessful
 
-        //socket.emit('matchFail', `Created a match object for ${socket.id}`)
+        if (res) {
+            console.log(res.data);
+            socket.emit('matchFail', "The match failed.")
+        } else {
+            console.log("Axios: No result data.")
+        }
+
     })
 
     //For testing with Postman
@@ -70,19 +84,3 @@ io.on("connection", (socket) => {
         console.log(data)
     });
 });
-
-//const URL_MATCH_SERVICE = "http://localhost:8001/api/match";
-
-//const res = await axios.get("http://localhost:8001/api/match");
-//console.log(res.data);
-
-//const difficulty = "easy";
-//const currentUser = "TEST9";
-
-//const res2 = await axios
-//    .post("http://localhost:8001/api/match", { difficulty, currentUser })
-//    .catch((err) => {
-//        console.log(`Axios error in matching-service/index.js: ${err}`);
-//    });
-//console.log("Axios complete")
-//console.log(res2.data); //crashes app if axios.post was unsuccessful
