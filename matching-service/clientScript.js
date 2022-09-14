@@ -5,9 +5,7 @@ const socket = io('http://localhost:8001');
 socket.on('connect', () => {
     console.log(`I am connected via socket id: ${socket.id}`)
 
-    socket.emit('connection-success', username, socketID)
-
-    //socket.emit('match', "userName1", "medium")
+    //socket.emit('match', "userName1", "easy", socket.id)
     //socket.emit('leave-match', "userName1")
 
 });

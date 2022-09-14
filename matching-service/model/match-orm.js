@@ -1,9 +1,13 @@
 import { checkMatch, createMatch, deleteMatch } from "./repository.js";
 
 //need to separate orm functions from repository to decouple business logic from persistence
-export async function ormCreateMatch(isPendingMatch, difficulty, user1, user2) {
+export async function ormCreateMatch(isPendingMatch, difficulty, user1, user2,
+    user1SocketId, user2SocketId, collabRoomSocketId) {
     try {
-        const newMatch = await createMatch({ isPendingMatch, difficulty, user1, user2 });
+        const newMatch = await createMatch({
+            isPendingMatch, difficulty, user1, user2,
+            user1SocketId, user2SocketId, collabRoomSocketId
+        });
         newMatch.save();
         return true;
     } catch (err) {

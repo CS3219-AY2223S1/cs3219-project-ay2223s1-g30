@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 import axios from "axios";
 
 const app = express();
@@ -27,8 +28,14 @@ const httpServer = createServer(app)
 const io = new Server(httpServer, {
     /* socket.io options */
     cors: {
-        origin: '*',
+        origin: ["https://admin.socket.io", '*'],
+        credentials: true
     }
+});
+
+// For socket.io admin UI
+instrument(io, {
+    auth: false
 });
 
 httpServer.listen(8001);
@@ -41,10 +48,10 @@ console.log(`Axios Test: ${res.data}`);
 io.on("connection", (socket) => {
     console.log(`Received a connection request via socket id: ${socket.id}`);
 
-    socket.on('match', async (currentUser, difficulty) => {
-        console.log(`Received match request: (${currentUser}, ${difficulty})`);
+    socket.on('match', async (currentUser, difficulty, currentUserSocketId) => {
+        console.log(`Received match request: (${currentUser}, ${difficulty}, ${currentUserSocketId})`);
         console.log("Start Axios call (match)");
-        const res = await axios.post(URL_MATCH_SERVICE, { difficulty, currentUser })
+        const res = await axios.post(URL_MATCH_SERVICE, { difficulty, currentUser, currentUserSocketId })
             .catch((err) => {
                 console.log(`Axios error in matching-service/index.js (match): ${err}`);
             });
@@ -53,14 +60,19 @@ io.on("connection", (socket) => {
         if (res) {
             console.log(res.data);
             if (!res.data.isPendingMatch) {
-                console.log(res.data.user2);
-                // Send matchSuccess to both users in match
+                const collabRoom = (res.data.collabRoomSocketId);
+                const pendingUserSocketId = res.data.user2SocketId;
+                // Send matchSuccess to both users in complete match
+                socket.emit('matchSuccess', collabRoom);
+                io.to(pendingUserSocketId).emit('matchSuccess', collabRoom);
 
-                //io.to("socketID").emit('matchSuccess', `You were matched successfully!`);
-
-                // Push both clients to the same room.
+                // Push matched client into collab room.
+                socket.join(collabRoom);
+            } else {
+                // Push pending client into collab room.
+                const collabRoom = (res.data.collabRoomSocketId);
+                socket.join(collabRoom);
             }
-            
         } else {
             console.log("Axios: No result data.")
         }
@@ -79,12 +91,14 @@ io.on("connection", (socket) => {
 
         if (res) {
             console.log(res.data);
-            socket.emit('matchFail', "The match failed.")
+            const collabRoom = res.data.collabRoomSocketId;
+            socket.emit('matchFail', collabRoom)
+
+            // Push client out of room
+            socket.leave(collabRoom);
         } else {
             console.log("Axios: No result data.")
         }
-
-        // If client leaves, pull client from room
 
     })
 

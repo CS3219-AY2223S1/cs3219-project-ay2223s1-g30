@@ -19,6 +19,21 @@ let MatchModelSchema = new Schema({
         required: false,
         unique: false,
     },
+    user1SocketId: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+    user2SocketId: {
+        type: String,
+        required: false,
+        unique: false,
+    },
+    collabRoomSocketId: {
+        type: String,
+        required: true,
+        unique: false,
+    },
 });
 
 export default mongoose.model("MatchModel", MatchModelSchema);
