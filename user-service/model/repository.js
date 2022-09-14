@@ -21,3 +21,11 @@ export async function createUser(params) {
 export async function checkUser(params) {
 	return UserModel.findOne(params);
 }
+
+export async function deleteUser(params) {
+	return UserModel.deleteOne(params);
+}
+
+export async function updateUser(param1, param2) {
+	return UserModel.findByIdAndUpdate(param1, param2);
+}
