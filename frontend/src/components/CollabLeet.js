@@ -3,10 +3,6 @@ import {
 	Button,
 	Typography,
 	ButtonGroup,
-	Card,
-	CardContent,
-	CardActionArea,
-	Grid,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -30,9 +26,6 @@ function CollabLeet() {
 		</Box>
 		
     )
-}
-
-const handleMatch = async (difficulty) => {
 }
 
 export default CollabLeet

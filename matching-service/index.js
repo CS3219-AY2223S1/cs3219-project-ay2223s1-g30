@@ -30,5 +30,8 @@ io.on("connection", (socket) => {
     socket.on("message", function (data) {
         console.log("data: " + data);
     });
-});
 
+    socket.on("match", function (data) {
+        console.log("data: " + data);
+    });
+});

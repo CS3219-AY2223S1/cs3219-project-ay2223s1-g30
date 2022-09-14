@@ -8,23 +8,28 @@ import {
 	CardActionArea,
 	Grid,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
 import CircularProgressWithLabel from "./CircularProgress";
+import {socket} from "./services/socket";
+
 function SelectionPage() {
-	const socket = io('http://localhost:8001', {
-		cors: {
-			origin: '*',
-		  }
-	});
-	let socketID;
+
+	console.log("Attempting to connect");
 	// client-side
-	socket.on("connect", () => {
-		socketID = socket.id;
-	});
+	const [socketID, handleSocketID] = useState("");
 	const [difficulty, handleDifficulty] = useState("");
 
+	useEffect(() => {
+		socket.emit('HELLO_THERE');
+		socket.on("connect", () => {
+			console.log("Front-end connection to localhost:8001 socket successful.");
+			console.log(" connected on socket id: " + socket.id);
+			handleSocketID(socket.id);
+		});
+	 }, []);
+	
+	console.log(socketID);
     return (
         <Box display={"flex"} flexDirection={"column"} width={"100%"}>
 			<Typography variant={"h3"} marginBottom={"10rem"}>
@@ -76,8 +81,8 @@ function SelectionPage() {
 		</Grid>
 			<Box>
 				<ButtonGroup variant="contained" aria-label="outlined primary button group">
-					<Button fullWidth="true" onClick={() => handleSolo(socket, difficulty)}>Practice LeetCode Alone!</Button>
-					<Button fullWidth="true" onClick={() => handleMatching(socket, difficulty)}>Collaborate with others!</Button>
+					<Button fullWidth={true} onClick={() => handleSolo(socket, difficulty)}>Practice LeetCode Alone!</Button>
+					<Button fullWidth={true} onClick={() => handleMatching(socket, difficulty)}>Collaborate with others!</Button>
 				</ButtonGroup>
 			</Box>
 			<div id="timer"></div>
@@ -94,7 +99,8 @@ const handleMatching = (socket, difficulty) => {
 	console.log(" Selected Matching with Difficulty: " +  difficulty );
 
 	// Do a socket emit to Brandon with match.
-	console.log("socket emit: match for: " + "DUMMYUSERNAME/UNIQUE ID" + " queuing for difficulty: " + difficulty);
+	const uniqueID = "PLACEHOLDER";
+	console.log("socket emit: match for: " + uniqueID + " queuing for difficulty: " + difficulty);
 	socket.emit("match", ("DUMMYUSERNAME/UNIQUE ID", difficulty));
 
 	// Timer object on ReactDOM
@@ -104,8 +110,8 @@ const handleMatching = (socket, difficulty) => {
 
 	// Timer for 30seconds timeout for socket.emit("match-failed")
 	const timer = setTimeout(() => {
-		console.log("socket emit: leave-match for: " + "DUMMYUSERNAME/UNIQUE ID" + " queuing for difficulty: " + difficulty);
-		socket.emit("leave-match", "DUMMYUSERNAME/UNIQUE ID", difficulty);
+		console.log("socket emit: leave-match for: " + uniqueID + " queuing for difficulty: " + difficulty);
+		socket.emit("leave-match", uniqueID, difficulty);
 		root.render("match not found!! please try again!");
 	  }, 30000);
 
