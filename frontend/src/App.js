@@ -2,7 +2,9 @@ import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom
 import SignupPage from './components/SignupPage';
 import LoginPage from "./components/LoginPage";
 import DashboardPage from "./components/DashboardPage"
+import SelectionPage from "./components/SelectionPage"
 import {Box} from "@mui/material";
+import CollabLeet from "./components/CollabLeet";
 
 function App() {
     return (
@@ -14,6 +16,8 @@ function App() {
                         <Route path="/signup" element={<SignupPage/>}/>
                         <Route path ="/login" element={<LoginPage/>}/>
                         <Route path ="/dashboard" element={<DashboardPage/>}/>
+                        <Route path ="/selection" element={<SelectionPage/>}/>
+                        <Route path ="/collab" element={<CollabLeet/>}/>
                     </Routes>
                 </Router>
             </Box>

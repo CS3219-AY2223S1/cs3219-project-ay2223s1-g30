@@ -14,6 +14,9 @@ function Dashboard() {
             <Button component={Link} to="/login">
                 Log out
             </Button>
+			<Button component={Link} to="/Selection">
+				Do Leetcode
+            </Button>
 		</Box>
     )
 }
