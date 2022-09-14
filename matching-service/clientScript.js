@@ -4,11 +4,12 @@ const socket = io('http://localhost:8001');
 
 socket.on('connect', () => {
     console.log(`I am connected via socket id: ${socket.id}`)
-    socket.emit('match', `${socket.id}`)
+    //socket.emit('match', "tiger", "easy")
+    socket.emit('leave-match', "TEST1")
     //start timer
 
     //timer ends
-    socket.emit('leave-match', `${socket.id}`)
+    //socket.emit('leave-match', `${socket.id}`)
 });
 
 

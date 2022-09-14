@@ -5,10 +5,10 @@ let MatchModelSchema = new Schema({
         type: Boolean,
         required: true,
     },
-    //difficulty: {
-    //    type: String,
-    //    required: false,
-    //},
+    difficulty: {
+        type: String,
+        required: true,
+    },
     user1: {
         type: String,
         required: true,

@@ -21,3 +21,7 @@ export async function createMatch(params) {
 export async function checkMatch(params) {
     return MatchModel.findOne(params);
 }
+
+export async function deleteMatch(params) {
+    return MatchModel.findOneAndDelete(params);
+}
