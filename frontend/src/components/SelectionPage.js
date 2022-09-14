@@ -101,7 +101,7 @@ const handleMatching = (socket, difficulty) => {
 	// Do a socket emit to Brandon with match.
 	const uniqueID = "PLACEHOLDER";
 	console.log("socket emit: match for: " + uniqueID + " queuing for difficulty: " + difficulty);
-	socket.emit("match", ("DUMMYUSERNAME/UNIQUE ID", difficulty));
+	socket.emit("match", "DUMMYUSERNAME/UNIQUE ID", difficulty);
 
 	// Timer object on ReactDOM
 	let container = document.getElementById('timer');
@@ -111,13 +111,13 @@ const handleMatching = (socket, difficulty) => {
 	// Timer for 30seconds timeout for socket.emit("match-failed")
 	const timer = setTimeout(() => {
 		console.log("socket emit: leave-match for: " + uniqueID + " queuing for difficulty: " + difficulty);
-		socket.emit("leave-match", uniqueID, difficulty);
+		socket.emit("leave-match", uniqueID);
 		root.render("match not found!! please try again!");
 	  }, 30000);
 
 
 	  // If get match-success, clearTimeout
-	  socket.on("match-success", () => {
+	  socket.on("matchSuccess", () => {
 		clearTimeout(timer);
 		root.render("match found!!! Please wait for us to process you into the loading room.");
 

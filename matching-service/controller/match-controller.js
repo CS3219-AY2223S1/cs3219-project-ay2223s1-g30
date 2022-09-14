@@ -100,7 +100,7 @@ export async function createMatch(req, res) {
 
 export async function deleteMatch(req, res) {
     try {
-        const currentUser = req.params.username;
+        const currentUser = req.params.userID;
 
         if (currentUser) {
             const matchExistUser1 = await _checkMatchUser1(currentUser);

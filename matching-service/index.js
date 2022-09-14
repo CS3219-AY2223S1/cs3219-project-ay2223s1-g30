@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.get('/', (_, res) => res.send('Hello World from matching-service'));
 router.post('/', createMatch);
-router.delete('/:username', deleteMatch);
+router.delete('/:userID', deleteMatch);
 
 app.use('/api/match', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
@@ -26,6 +26,9 @@ const httpServer = createServer(app)
 
 const io = new Server(httpServer, {
     /* socket.io options */
+    cors: {
+        origin: '*',
+    }
 });
 
 httpServer.listen(8001);
@@ -50,8 +53,12 @@ io.on("connection", (socket) => {
         if (res) {
             console.log(res.data);
             if (!res.data.isPendingMatch) {
+                console.log(res.data.user2);
                 // Send matchSuccess to both users in match
-                socket.emit('matchSuccess', `You were matched successfully!`) //TODO: currently only sends to 2nd user
+
+                //io.to("socketID").emit('matchSuccess', `You were matched successfully!`);
+
+                // Push both clients to the same room.
             }
             
         } else {
@@ -76,6 +83,8 @@ io.on("connection", (socket) => {
         } else {
             console.log("Axios: No result data.")
         }
+
+        // If client leaves, pull client from room
 
     })
 
