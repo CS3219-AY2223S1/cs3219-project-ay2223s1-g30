@@ -6,7 +6,7 @@ import { authProtect } from "./middleware/authMiddleware.js";
 const app = express();
 const endpoint = process.env.PORT
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());    
+app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint})); // config cors so that front-end can use
 app.options("*", cors());
 app.use(cookieParser());
@@ -26,8 +26,8 @@ const router = express.Router();
 // Controller will contain all the User-defined Routes
 router.get("/", (_, res) => res.send("Hello World from user-service"));
 router.post("/", createUser);
-router.delete("/:username", deleteUser);
-router.put("/:username", updateUser);
+router.delete("/:username", authProtect, deleteUser);
+router.put("/:username", authProtect ,updateUser);
 router.get("/login", (_, res) => res.send("Hello World from login"));
 router.post("/login", loginUser);
 router.get("/dashboard/", authProtect, getProtectedMe);

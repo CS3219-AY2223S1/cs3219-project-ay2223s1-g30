@@ -80,6 +80,7 @@ export async function deleteUser(req, res) {
 						.status(400)
 						.json({ message: "Could not delete user!" });
 				} else {
+					res.clearCookie("token");
 					console.log(`Deleted user ${username} successfully!`);
 					return res.status(200).json({
 						message: `Deleted user ${username} successfully!`,
