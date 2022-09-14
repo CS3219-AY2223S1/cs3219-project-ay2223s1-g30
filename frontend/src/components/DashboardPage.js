@@ -102,6 +102,13 @@ function Dashboard() {
 			<Typography variant={"h3"} marginBottom={"2rem"}>
 				Welcome to your dashboard
 			</Typography>
+            <Button component={Link} to="/login">
+                Log out
+            </Button>
+			<Button component={Link} to="/Selection">
+				Do Leetcode
+            </Button>
+
 			<Button onClick={changingPassword}>Change password</Button>
 			<Button component={Link} to="/login">
 				Log out
