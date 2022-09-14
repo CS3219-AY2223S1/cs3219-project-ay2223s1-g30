@@ -4,10 +4,10 @@ import cookieParser from "cookie-parser";
 import { authProtect } from "./middleware/authMiddleware.js";
 
 const app = express();
-const URL2 = "http://localhost:3000"
+const endpoint = process.env.PORT
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());    
-app.use(cors({ credentials: true, origin: URL2})); // config cors so that front-end can use
+app.use(cors({ credentials: true, origin: endpoint})); // config cors so that front-end can use
 app.options("*", cors());
 app.use(cookieParser());
 

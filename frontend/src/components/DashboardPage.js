@@ -28,11 +28,11 @@ function Dashboard() {
 	const [password, setPassword] = useState("");
 	const [dialogTitle, setDialogTitle] = useState("");
 	const [dialogMsg, setDialogMsg] = useState("");
-	const [isChangePasswordSuccess, setIsChangePasswordSuccess] =
-		useState(false);
+	const [isChangePasswordSuccess, setIsChangePasswordSuccess] = useState(false);
 	const [isChangePasswordFail, setIsChangePasswordFail] = useState(false);
 	const [isDeleteSuccess, setIsDeleteSuccess] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
+	const [isCookieVerified, setIsCookieVerified] = useState(false);
 
 	const handleChangePassword = async () => {
 		const endpoint = URL_USER_SVC + "/" + username;
@@ -71,21 +71,23 @@ function Dashboard() {
 		}
 	};
 
-	// Placeholder for functions that need auth
+	// Check on landing to make sure cookie are still valid
 	const verifyCookie = async () => {
 		const endpoint = URL_USER_SVC_DASHBOARD;
 		const res = await axios.get(endpoint).catch((err) => {
 			if (err.response.status === STATUS_CODE_UNAUTHORIZED) {
-				console.log("No token provided")
+				setErrorDialog("User not authorized!");
 			} else {
-				console.log("Please try again later")
+				setErrorDialog("Please try again later");
 			}
 		});
 		if (res && res.status === STATUS_CODE_OKAY) {
-			console.log("Successfully Verified Cookie")
+			console.log("Successfully Logged in")
+			setIsCookieVerified(true);
 		}
 	}
 
+	// Currently using name to see who to log out
 	const handleLogout = async () => {
 		const endpoint = URL_USER_SVC_LOGOUT;
 		const res = await axios.post(endpoint, {username}).catch((err) => {
@@ -109,6 +111,7 @@ function Dashboard() {
 
 	useEffect(() => {
 		setUsername(sessionStorage.getItem("username"));
+		verifyCookie()
 		if (!(username === "undefined")) {
 			console.log("Fetched user", username);
 		}
@@ -130,77 +133,89 @@ function Dashboard() {
 		setDialogMsg(msg);
 	};
 
-	return (
-		<Box display={"flex"} flexDirection={"column"} width={"100%"}>
-			<Typography variant={"h3"} marginBottom={"2rem"}>
-				Welcome to your dashboard <code>{username}</code>
-			</Typography>
-			<Button onClick={changingPassword}>Change password</Button>
-			<Button component= {Link} to="/login" onClick={handleLogout}>
-				Log out
-			</Button>
-			<Button onClick={handleDelete}>Delete account</Button>
-			<Button onClick={verifyCookie}>Verify cookie</Button>
-			<Dialog open={isChangingPassword} onClose={closeDialog}>
-				<DialogTitle>{dialogTitle}</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						{isChangePasswordFail ? (
-							dialogMsg
-						) : (
-							<TextField
-								label="New Password"
-								variant="standard"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								sx={{ marginBottom: "1rem" }}
-								style={{ width: 250 }}
-								autoFocus
-							/>
-						)}
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							if (isChangePasswordFail) {
-								closeDialog();
-							} else {
-								closeDialog();
-								handleChangePassword();
-							}
-						}}
-					>
-						Done
-					</Button>
-				</DialogActions>
-			</Dialog>
-			<Dialog open={isChangePasswordSuccess} onClose={closeDialog}>
-				<DialogTitle>{dialogTitle}</DialogTitle>
-				<DialogContent>
-					<DialogContentText>{dialogMsg}</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={closeDialog}>Done</Button>
-				</DialogActions>
-			</Dialog>
-			<Dialog open={isDeleteSuccess} onClose={closeDialog}>
-				<DialogTitle>{dialogTitle}</DialogTitle>
-				<DialogContent>
-					<DialogContentText>{dialogMsg}</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					{isDeleteSuccess ? (
-						<Button component={Link} to="/signup">
+	if (isCookieVerified) {
+		return (
+			<Box display={"flex"} flexDirection={"column"} width={"100%"}>
+				<Typography variant={"h3"} marginBottom={"2rem"}>
+					Welcome to your dashboard <code>{username}</code>
+				</Typography>
+				<Button onClick={changingPassword}>Change password</Button>
+				<Button component= {Link} to="/login" onClick={handleLogout}>
+					Log out
+				</Button>
+				<Button onClick={handleDelete}>Delete account</Button>
+				<Button onClick={verifyCookie}>Verify cookie</Button>
+				<Dialog open={isChangingPassword} onClose={closeDialog}>
+					<DialogTitle>{dialogTitle}</DialogTitle>
+					<DialogContent>
+						<DialogContentText>
+							{isChangePasswordFail ? (
+								dialogMsg
+							) : (
+								<TextField
+									label="New Password"
+									variant="standard"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									sx={{ marginBottom: "1rem" }}
+									style={{ width: 250 }}
+									autoFocus
+								/>
+							)}
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button
+							onClick={() => {
+								if (isChangePasswordFail) {
+									closeDialog();
+								} else {
+									closeDialog();
+									handleChangePassword();
+								}
+							}}
+						>
 							Done
 						</Button>
-					) : (
+					</DialogActions>
+				</Dialog>
+				<Dialog open={isChangePasswordSuccess} onClose={closeDialog}>
+					<DialogTitle>{dialogTitle}</DialogTitle>
+					<DialogContent>
+						<DialogContentText>{dialogMsg}</DialogContentText>
+					</DialogContent>
+					<DialogActions>
 						<Button onClick={closeDialog}>Done</Button>
-					)}
-				</DialogActions>
-			</Dialog>
-		</Box>
-	);
+					</DialogActions>
+				</Dialog>
+				<Dialog open={isDeleteSuccess} onClose={closeDialog}>
+					<DialogTitle>{dialogTitle}</DialogTitle>
+					<DialogContent>
+						<DialogContentText>{dialogMsg}</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						{isDeleteSuccess ? (
+							<Button component={Link} to="/signup">
+								Done
+							</Button>
+						) : (
+							<Button onClick={closeDialog}>Done</Button>
+						)}
+					</DialogActions>
+				</Dialog>
+			</Box>
+		);
+	} else {
+		return (
+			<Box display={"flex"} flexDirection={"column"} width={"100%"}>
+				<Typography variant={"h3"} marginBottom={"2rem"}>
+					You are not logged in :( Please Log in
+				</Typography>
+				<Button component={Link} to="/login">
+					Go to Log in Page
+				</Button>
+			</Box>);
+	}
 }
 
 export default Dashboard;
