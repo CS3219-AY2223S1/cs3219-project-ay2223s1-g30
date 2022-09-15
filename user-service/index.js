@@ -2,9 +2,15 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { authProtect } from "./middleware/authMiddleware.js";
+import redis from "redis";
 
 const app = express();
 const endpoint = process.env.PORT
+
+export const redisClient = redis.createClient()
+await redisClient.connect()
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint})); // config cors so that front-end can use

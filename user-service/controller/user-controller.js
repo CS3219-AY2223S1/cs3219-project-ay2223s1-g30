@@ -5,6 +5,8 @@ import { ormUpdateUser as _updateUser } from "../model/user-orm.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../model/user-model.js";
+import { redisClient } from "../index.js";
+import redis from "redis";
 
 export async function createUser(req, res) {
 	try {
@@ -80,6 +82,8 @@ export async function deleteUser(req, res) {
 						.status(400)
 						.json({ message: "Could not delete user!" });
 				} else {
+					let token = req.cookies.token;
+					redisClient.setEx(username, 3600, token);
 					res.clearCookie("token");
 					console.log(`Deleted user ${username} successfully!`);
 					return res.status(200).json({
@@ -143,6 +147,8 @@ export async function logoutUser(req, res) {
 				message: "User not found! Try again.",
 			});
 		} else {
+			let token = req.cookies.token;
+			redisClient.setEx(token, 3600, username);
 			res.clearCookie("token");
 			res.status(200).json({
 				message: "Successfully Logged out user"

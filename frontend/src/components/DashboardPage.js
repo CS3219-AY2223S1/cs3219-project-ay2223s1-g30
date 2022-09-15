@@ -75,6 +75,7 @@ function Dashboard() {
 	const verifyCookie = async () => {
 		const endpoint = URL_USER_SVC_DASHBOARD;
 		const res = await axios.get(endpoint).catch((err) => {
+			console.log(err)
 			if (err.response.status === STATUS_CODE_UNAUTHORIZED) {
 				setErrorDialog("User not authorized!");
 			} else {
