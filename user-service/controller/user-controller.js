@@ -2,6 +2,7 @@ import { ormCreateUser as _createUser } from "../model/user-orm.js";
 import { ormCheckUser as _checkUser } from "../model/user-orm.js";
 import { ormDeleteUser as _deleteUser } from "../model/user-orm.js";
 import { ormUpdateUser as _updateUser } from "../model/user-orm.js";
+import { ormCreateToken as _createToken } from "../model/token-orm.js"
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../model/user-model.js";
@@ -73,18 +74,26 @@ export async function deleteUser(req, res) {
 					message: "User not found! Failed to delete user.",
 				});
 			} else {
-				const resp = await _deleteUser(username);
-				console.log(resp);
-				if (resp.err) {
+				const token = req.cookies.token
+				const response = await _createToken(token);
+				if (response.err) {
 					return res
 						.status(400)
-						.json({ message: "Could not delete user!" });
+						.json({ message: "Could not index a new token!" });
 				} else {
-					res.clearCookie("token");
-					console.log(`Deleted user ${username} successfully!`);
-					return res.status(200).json({
-						message: `Deleted user ${username} successfully!`,
-					});
+					const resp = await _deleteUser(username);
+					console.log(resp);
+					if (resp.err) {
+						return res
+							.status(400)
+							.json({ message: "Could not delete user!" });
+					} else {
+						res.clearCookie("token");
+						console.log(`Deleted user ${username} successfully!`);
+						return res.status(200).json({
+							message: `Deleted user ${username} successfully!`,
+						});
+					}
 				}
 			}
 		}
@@ -143,10 +152,18 @@ export async function logoutUser(req, res) {
 				message: "User not found! Try again.",
 			});
 		} else {
-			res.clearCookie("token");
-			res.status(200).json({
-				message: "Successfully Logged out user"
-			})
+			const token = req.cookies.token
+			const resp = await _createToken(token);
+			if (resp.err) {
+				return res
+					.status(400)
+					.json({ message: "Could not index a new token!" });
+			} else {
+				res.clearCookie("token");
+				res.status(200).json({
+					message: "Successfully Logged out user"
+				})
+			}
 		}
 	} catch (err) {
 		console.log(err)
@@ -245,6 +262,6 @@ export async function updateUser(req, res) {
 // Generate JWT
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: "10d",
+		expiresIn: "1d",
 	});	
 };
