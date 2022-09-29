@@ -14,7 +14,7 @@ import {
 	Paper,
 	Grid,
 	createTheme,
-	ThemeProvider
+	ThemeProvider,
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
@@ -74,13 +74,13 @@ function SignupPage() {
 	};
 
 	return (
-		<ThemeProvider theme = {theme}>
-			<Grid container component="main" sx = {{height: '100vh', width: '100vw', minWidth: "100%", minHeight: "100%"}}>
+		<ThemeProvider theme={theme}>
+			<Grid container rowSpacing={8} columnSpacing={8} component="main" sx = {{mb: -10, minWidth: "100%", height: "100vh", width: "100vw"}}>
 				<CssBaseline />
 				<Grid
 					item
 					xs={false}
-					sm={4}
+					sm={6}
 					md={7}
 					sx={{
 						backgroundImage: `url(${PeerPrepLogo})`,

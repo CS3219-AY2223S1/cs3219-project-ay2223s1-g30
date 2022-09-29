@@ -143,6 +143,9 @@ function Dashboard() {
 				<Button component= {Link} to="/login" onClick={handleLogout}>
 					Log out
 				</Button>
+				<Button component={Link} to="/Selection">
+					Do Leetcode
+				</Button>
 				<Button onClick={handleDelete}>Delete account</Button>
 				<Button onClick={verifyCookie}>Verify cookie</Button>
 				<Dialog open={isChangingPassword} onClose={closeDialog}>
