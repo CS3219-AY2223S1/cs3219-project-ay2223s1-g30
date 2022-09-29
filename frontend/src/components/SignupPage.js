@@ -10,7 +10,6 @@ import {
 	Typography,
 	Avatar,
 	CssBaseline,
-	FormControlLabel,
 	Paper,
 	Grid,
 	createTheme,
