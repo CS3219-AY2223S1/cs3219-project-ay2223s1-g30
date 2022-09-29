@@ -26,6 +26,7 @@ import {
 } from "../constants";
 import { Link } from "react-router-dom";
 import PeerPrepLogo from "../resources/PeerPrepLogo.png"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 
 function SignupPage() {
 	const [username, setUsername] = useState("");
@@ -102,7 +103,7 @@ function SignupPage() {
 						}}
 					>
 						<Avatar sx={{ m: 1, bgcolour: 'secondary.main' }}>
-
+							<LockOutlinedIcon/>
 						</Avatar>
 						<Typography variant={"h4"} component={"h1"}>
 							Sign Up
@@ -132,10 +133,15 @@ function SignupPage() {
 							flexDirection={"row"}
 							justifyContent={"flex-end"}
 						>
-							<Button variant={"contained"} sx={{width: '35vw', height: '5vh'}} onClick={handleSignup}>
+							<Button variant={"contained"} sx={{width: '35vw', height: '5vh', marginBottom: "2rem"}} onClick={handleSignup}>
 								Sign up
 							</Button>
 						</Box>
+						<Grid item>
+							<Link href="#" variant = "body3" component={Link} to="/login"> 
+								{"Already have an account? Log in"}
+							</Link>
+						</Grid>
 						<Dialog open={isDialogOpen} onClose={closeDialog}>
 							<DialogTitle>{dialogTitle}</DialogTitle>
 							<DialogContent>
