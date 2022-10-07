@@ -10,6 +10,21 @@ let UserModelSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	easy: [
+		{
+			type: String,
+		},
+	],
+	medium: [
+		{
+			type: String,
+		},
+	],
+	hard: [
+		{
+			type: String,
+		},
+	],
 });
 
 export default mongoose.model("UserModel", UserModelSchema);
