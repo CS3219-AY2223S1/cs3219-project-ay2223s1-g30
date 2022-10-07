@@ -178,9 +178,6 @@ export async function getMe(req, res) {
 		const { username } = req.body;
 		const user = await _checkUser(username);
 
-		console.log("HERE");
-		console.log(username);
-
 		if (!user) {
 			return res.status(409).json({
 				message: "User not found! Try again.",

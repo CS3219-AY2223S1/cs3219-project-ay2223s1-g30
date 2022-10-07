@@ -13,16 +13,19 @@ let UserModelSchema = new Schema({
 	easy: [
 		{
 			type: String,
+			default: undefined,
 		},
 	],
 	medium: [
 		{
 			type: String,
+			default: undefined,
 		},
 	],
 	hard: [
 		{
 			type: String,
+			default: undefined,
 		},
 	],
 });
