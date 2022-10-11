@@ -80,7 +80,7 @@ export async function createMatch(req, res) {
                 const isPendingMatch = "true";
                 const user2 = "";
                 const user2SocketId = "";
-                const collabRoomSocketId = "Room " + roomCounter;
+                const collabRoomSocketId = "Room" + roomCounter;
                 roomCounter++;
                 const resp = await _createMatch(isPendingMatch, difficulty, currentUser, user2,
                     currentUserSocketId, user2SocketId, collabRoomSocketId);

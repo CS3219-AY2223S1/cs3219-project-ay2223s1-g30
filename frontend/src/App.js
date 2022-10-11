@@ -14,10 +14,11 @@ function App() {
                     <Routes>
                         <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
                         <Route path="/signup" element={<SignupPage/>}/>
-                        <Route path ="/login" element={<LoginPage/>}/>
-                        <Route path ="/dashboard" element={<DashboardPage/>}/>
-                        <Route path ="/selection" element={<SelectionPage/>}/>
-                        <Route path ="/collab" element={<CollabLeet/>}/>
+                        <Route path="/login" element={<LoginPage/>}/>
+                        <Route path="/dashboard" element={<DashboardPage/>}/>
+                        <Route path="/selection" element={<SelectionPage />} />
+                        <Route path="/collab" exact element={<Navigate replace to={`/collab/${sessionStorage.getItem("collabRoomId")}`} />}></Route>
+                        <Route path="/collab/:id" element={<CollabLeet />} />
                     </Routes>
                 </Router>
             </Box>

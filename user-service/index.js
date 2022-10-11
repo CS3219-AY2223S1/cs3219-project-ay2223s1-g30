@@ -35,8 +35,9 @@ router.post("/dashboard/", getMe);
 router.post("/logout", logoutUser)
 
 app.use("/api/user", router).all((_, res) => {
-	res.setHeader("content-type", "application/json");
-	res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("content-type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    //res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 });
 
 app.listen(8000, () => console.log("user-service listening on port 8000"));

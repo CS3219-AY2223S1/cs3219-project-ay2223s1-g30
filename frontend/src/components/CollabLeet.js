@@ -5,14 +5,20 @@ import {
 	ButtonGroup,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import TextEditor from "./Collab/TextEditor.js"
 
 function CollabLeet() {
     return (
         <Box>
 			<Typography variant={"h3"} marginBottom={"10rem"}>
 				Collaborative LeetCode
-			</Typography>
-			<div
+            </Typography>
+            <div style={{ 'borderColor': 'red', 'borderStyle': 'solid' }}>Question goes here
+            </div>
+
+            <TextEditor />
+
+            <div
 		style={{
 		  display: 'flex',
 		  justifyContent: 'center',
@@ -24,7 +30,6 @@ function CollabLeet() {
 			</ButtonGroup>
 			</div>
 		</Box>
-		
     )
 }
 

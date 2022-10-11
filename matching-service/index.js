@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import axios from "axios";
+import Document from "./model/document-model.js";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -28,7 +29,7 @@ const httpServer = createServer(app)
 const io = new Server(httpServer, {
     /* socket.io options */
     cors: {
-        origin: ["https://admin.socket.io", '*'],
+        origin: ["https://admin.socket.io", "http://localhost:3000"],
         credentials: true
     }
 });
@@ -62,16 +63,18 @@ io.on("connection", (socket) => {
             if (!res.data.isPendingMatch) {
                 const collabRoom = (res.data.collabRoomSocketId);
                 const pendingUserSocketId = res.data.user2SocketId;
+
                 // Send matchSuccess to both users in complete match
                 socket.emit('matchSuccess', collabRoom);
+                await sleep(1000); // Need to set both calls apart since they could both end up creating a new room. TODO: Find alternative
                 io.to(pendingUserSocketId).emit('matchSuccess', collabRoom);
 
-                // Push matched client into collab room.
-                socket.join(collabRoom);
-            } else {
-                // Push pending client into collab room.
-                const collabRoom = (res.data.collabRoomSocketId);
-                socket.join(collabRoom);
+                // Delete match after pair has been formed
+                const URL_DELETE_MATCH = URL_MATCH_SERVICE + "/" + currentUser;
+                await axios.delete(URL_DELETE_MATCH, { currentUser })
+                    .catch((err) => {
+                        console.log(`Axios error in matching-service/index.js (leave-match): ${err}`);
+                    });
             }
         } else {
             console.log("Axios: No result data.")
@@ -93,13 +96,25 @@ io.on("connection", (socket) => {
             console.log(res.data);
             const collabRoom = res.data.collabRoomSocketId;
             socket.emit('matchFail', collabRoom)
-
-            // Push client out of room
-            socket.leave(collabRoom);
         } else {
             console.log("Axios: No result data.")
         }
 
+    })
+
+    //For collaboration text editor
+    socket.on("get-document", async documentId => {
+        const document = await findDocument(documentId)
+        socket.join(documentId)
+        socket.emit("load-document", document.data)
+
+        socket.on("send-changes", delta => {
+            socket.broadcast.to(documentId).emit("receive-changes", delta)
+        })
+
+        socket.on("save-document", async data => {
+            await Document.findByIdAndUpdate(documentId, {data})
+        })
     })
 
     //For testing with Postman
@@ -107,3 +122,20 @@ io.on("connection", (socket) => {
         console.log(data)
     });
 });
+
+const defaultValue = ""
+async function findDocument(id) {
+    if (id == null) return
+
+    const document = await Document.findById(id)
+    if (document) {
+        return document
+    } else {
+        console.log(`id not found: ${id}`)
+        return await Document.create({ _id: id, data: defaultValue })
+    }
+}
+
+function sleep(noOfMilliseconds) {
+    return new Promise(resolve => setTimeout(resolve, noOfMilliseconds));
+}  
