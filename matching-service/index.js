@@ -4,16 +4,18 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import axios from "axios";
+import DocumentModel from "./model/document-model.js";
 
 const app = express();
+const endpoint = process.env.PORT;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors()); // config cors so that front-end can use
+app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
 app.options("*", cors());
 import {
 	createMatch,
 	deleteMatch,
-	getRoomId,
+	getRoom,
 } from "./controller/match-controller.js";
 
 const router = express.Router();
@@ -33,7 +35,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
 	/* socket.io options */
 	cors: {
-		origin: ["https://admin.socket.io", "*"],
+		origin: ["https://admin.socket.io", "http://localhost:3000"],
 		credentials: true,
 	},
 });
@@ -76,19 +78,14 @@ io.on("connection", (socket) => {
 			if (!res.data.isPendingMatch) {
 				const collabRoom = res.data.collabRoomSocketId;
 				const pendingUserSocketId = res.data.user2SocketId;
+
 				// Send matchSuccess to both users in complete match
 				socket.emit("matchSuccess", collabRoom);
+				await sleep(1000); // Need to set both calls apart since they could both end up creating a new room. TODO: Find alternative
 				io.to(pendingUserSocketId).emit("matchSuccess", collabRoom);
-
-				// Push matched client into collab room.
-				socket.join(collabRoom);
-			} else {
-				// Push pending client into collab room.
-				const collabRoom = res.data.collabRoomSocketId;
-				socket.join(collabRoom);
 			}
 		} else {
-			console.log("Axios: No result data.");
+			console.log("Axios: (match) No result data.");
 		}
 	});
 
@@ -109,12 +106,24 @@ io.on("connection", (socket) => {
 			console.log(res.data);
 			const collabRoom = res.data.collabRoomSocketId;
 			socket.emit("matchFail", collabRoom);
-
-			// Push client out of room
-			socket.leave(collabRoom);
 		} else {
-			console.log("Axios: No result data.");
+			console.log("Axios: (leave-match) No result data.");
 		}
+	});
+
+	//For collaboration text editor
+	socket.on("get-document", async (documentId) => {
+		const document = await findDocument(documentId);
+		socket.join(documentId);
+		socket.emit("load-document", document.data);
+
+		socket.on("send-changes", (delta) => {
+			socket.broadcast.to(documentId).emit("receive-changes", delta);
+		});
+
+		socket.on("save-document", async (data) => {
+			await DocumentModel.findByIdAndUpdate(documentId, { data });
+		});
 	});
 
 	//For testing with Postman
@@ -122,3 +131,20 @@ io.on("connection", (socket) => {
 		console.log(data);
 	});
 });
+
+const defaultValue = "";
+async function findDocument(id) {
+	if (id == null) return;
+
+	const document = await DocumentModel.findById(id);
+	if (document) {
+		return document;
+	} else {
+		// No existing document found. Create a new document.
+		return await DocumentModel.create({ _id: id, data: defaultValue });
+	}
+}
+
+function sleep(noOfMilliseconds) {
+	return new Promise((resolve) => setTimeout(resolve, noOfMilliseconds));
+}

@@ -18,6 +18,7 @@ function SelectionPage() {
 	// client-side
 	const [socketID, handleSocketID] = useState("");
 	const [difficulty, handleDifficulty] = useState("");
+	//const [username, setUsername] = useState("");
 
 	useEffect(() => {
 		socket.emit("HELLO_THERE");
@@ -145,15 +146,16 @@ const handleMatching = (socket, difficulty) => {
 	}
 	console.log(" Selected Matching with Difficulty: " + difficulty);
 
-	// Do a socket emit to Brandon with match.
-	const uniqueID = "PLACEHOLDER";
+	// Do a socket emit to match with another user
+	const username = sessionStorage.getItem("username");
+	const userID = socket.id;
 	console.log(
 		"socket emit: match for: " +
-			uniqueID +
+			username +
 			" queuing for difficulty: " +
 			difficulty
 	);
-	socket.emit("match", "DUMMYUSERNAME/UNIQUE ID", difficulty);
+	socket.emit("match", username, difficulty, userID);
 
 	// Timer object on ReactDOM
 	let container = document.getElementById("timer");
@@ -164,22 +166,24 @@ const handleMatching = (socket, difficulty) => {
 	const timer = setTimeout(() => {
 		console.log(
 			"socket emit: leave-match for: " +
-				uniqueID +
+				username +
 				" queuing for difficulty: " +
 				difficulty
 		);
-		socket.emit("leave-match", uniqueID);
+		socket.emit("leave-match", username);
 		root.render("match not found!! please try again!");
 	}, 30000);
 
 	// If get match-success, clearTimeout
-	socket.on("matchSuccess", () => {
+	socket.on("matchSuccess", (collabRoomId) => {
 		clearTimeout(timer);
 		root.render(
-			"match found!!! Please wait for us to process you into the loading room."
+			"Match found! Please wait for us to process you into the collab room."
 		);
 
 		// TRANSPORT USER TO ROOM! AKA COLLABLEET?
+		sessionStorage.setItem("collabRoomId", collabRoomId);
+		window.location.replace(`/collab`);
 	});
 };
 

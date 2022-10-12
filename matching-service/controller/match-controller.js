@@ -27,13 +27,31 @@ export async function createMatch(req, res) {
 		if (difficulty && currentUser && currentUserSocketId) {
 			const matchExistUser1 = await _checkMatchUser1(currentUser);
 			const matchExistUser2 = await _checkMatchUser2(currentUser);
-			if (matchExistUser1 || matchExistUser2) {
+			// If user is already in a match, send them to the room.
+			if (matchExistUser1 && !matchExistUser1.isPendingMatch) {
+				const existingRoomId = matchExistUser1.collabRoomSocketId;
 				console.log(
-					`Controller ERROR: currentUser (${currentUser}) is already in a match. Please choose another user!`
+					`${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`
+				);
+				return res.status(201).json({
+					message: `${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`,
+					collabRoomSocketId: existingRoomId,
+				});
+			} else if (matchExistUser2 && !matchExistUser2.isPendingMatch) {
+				const existingRoomId = matchExistUser2.collabRoomSocketId;
+				console.log(
+					`${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`
+				);
+				return res.status(201).json({
+					message: `${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`,
+					collabRoomSocketId: existingRoomId,
+				});
+			} else if (matchExistUser1 || matchExistUser2) {
+				console.log(
+					`Controller ERROR: currentUser (${currentUser}) is already in a pending match.`
 				);
 				return res.status(409).json({
-					message:
-						"Controller ERROR: currentUser is already in a match. Please choose another user!",
+					message: `Controller ERROR: currentUser (${currentUser}) is already in a pending match.`,
 				});
 			}
 
