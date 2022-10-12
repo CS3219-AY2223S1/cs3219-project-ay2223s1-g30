@@ -3,6 +3,11 @@ import Quill from "quill"
 import "quill/dist/quill.snow.css"
 import { io } from "socket.io-client"
 import { useParams } from "react-router-dom"
+import {
+    Button,
+    ButtonGroup,
+} from "@mui/material";
+
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -97,5 +102,23 @@ export default function TextEditor() {
         q.setText("Loading...")
         setQuill(q)
     }, [])
-    return < div className="container" ref={wrapperRef} ></div >
+    return <div>
+        < div className="container" ref={wrapperRef} ></div >
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: '20px',
+                marginBottom: '20px',
+            }}>
+        <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button onClick={() => {
+                    socket.emit("leave-match", sessionStorage.getItem("username"));
+                    console.log(sessionStorage.getItem("username"));
+                    window.location.replace(`/selection`);
+                }}>Leave Room</Button>
+            </ButtonGroup>
+        </div>
+    </div>
 }
