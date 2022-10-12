@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
-import CircularProgressWithLabel from "./CircularProgress";
 import {socket} from "./services/socket";
+import {TimerDialog} from "./Dialog";
 
 function SelectionPage() {
 
@@ -107,16 +107,11 @@ const handleMatching = (socket, difficulty) => {
 
 	// Timer object on ReactDOM
 	let container = document.getElementById('timer');
-	let root = createRoot(container);
-    root.render(<CircularProgressWithLabel />);
+	let root = createRoot(container);;
 
 	// Timer for 30seconds timeout for socket.emit("match-failed")
-	const timer = setTimeout(() => {
-        console.log("socket emit: leave-match for: " + username + " queuing for difficulty: " + difficulty);
-        socket.emit("leave-match", username);
-		root.render("match not found!! please try again!");
-	  }, 30000);
-
+	let timerID = timer(root, username, difficulty);
+	root.render(<TimerDialog data-param={[true, timerID, socket, username]}/>);
 
 	  // If get match-success, clearTimeout
 	  socket.on("matchSuccess", (collabRoomId) => {
@@ -131,6 +126,19 @@ const handleMatching = (socket, difficulty) => {
 
 const handleSolo = (difficulty) => {
 	console.log("Selected Solo with Difficulty: " + difficulty);
+}
+
+// Creation of timer
+const timer = (root, userName, difficulty) => {
+	const timerID = setTimeout(handleTimeout, 30000, root, userName, difficulty);
+	return timerID;
+}
+
+// Handling 30s timeout
+const handleTimeout = (root, userName, difficulty) => {
+	console.log("socket emit: leave-match for: " + userName + " queuing for difficulty: " + difficulty);
+	socket.emit("leave-match", userName);
+	root.render("match not found!! please try again!");
 }
 
 export default SelectionPage
