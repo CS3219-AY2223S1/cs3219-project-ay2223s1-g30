@@ -18,7 +18,8 @@ function SelectionPage() {
 	console.log("Attempting to connect");
 	// client-side
 	const [socketID, handleSocketID] = useState("");
-	const [difficulty, handleDifficulty] = useState("");
+    const [difficulty, handleDifficulty] = useState("");
+    //const [username, setUsername] = useState("");
 
 	useEffect(() => {
 		socket.emit('HELLO_THERE');
@@ -26,7 +27,7 @@ function SelectionPage() {
 			console.log("Front-end connection to localhost:8001 socket successful.");
 			console.log(" connected on socket id: " + socket.id);
 			handleSocketID(socket.id);
-		});
+        });
 	 }, []);
 	
 	console.log(socketID);
@@ -82,7 +83,7 @@ function SelectionPage() {
 			<Box>
 				<ButtonGroup variant="contained" aria-label="outlined primary button group">
 					<Button fullWidth={true} onClick={() => handleSolo(socket, difficulty)}>Practice LeetCode Alone!</Button>
-					<Button fullWidth={true} onClick={() => handleMatching(socket, difficulty)}>Collaborate with others!</Button>
+                    <Button fullWidth={true} onClick={() => handleMatching(socket, difficulty)}>Collaborate with others!</Button>
 				</ButtonGroup>
 			</Box>
 			<div id="timer"></div>
@@ -98,30 +99,33 @@ const handleMatching = (socket, difficulty) => {
 	}
 	console.log(" Selected Matching with Difficulty: " +  difficulty );
 
-	// Do a socket emit to Brandon with match.
-	const uniqueID = "PLACEHOLDER";
-	console.log("socket emit: match for: " + uniqueID + " queuing for difficulty: " + difficulty);
-	socket.emit("match", "DUMMYUSERNAME/UNIQUE ID", difficulty);
+    // Do a socket emit to match with another user
+    const username = sessionStorage.getItem("username");
+    const userID = socket.id;
+    console.log("socket emit: match for: " + username + " queuing for difficulty: " + difficulty);
+    socket.emit("match", username, difficulty, userID);
 
 	// Timer object on ReactDOM
 	let container = document.getElementById('timer');
 	let root = createRoot(container);
-	root.render(<CircularProgressWithLabel/>);
+    root.render(<CircularProgressWithLabel />);
 
 	// Timer for 30seconds timeout for socket.emit("match-failed")
 	const timer = setTimeout(() => {
-		console.log("socket emit: leave-match for: " + uniqueID + " queuing for difficulty: " + difficulty);
-		socket.emit("leave-match", uniqueID);
+        console.log("socket emit: leave-match for: " + username + " queuing for difficulty: " + difficulty);
+        socket.emit("leave-match", username);
 		root.render("match not found!! please try again!");
 	  }, 30000);
 
 
 	  // If get match-success, clearTimeout
-	  socket.on("matchSuccess", () => {
+	  socket.on("matchSuccess", (collabRoomId) => {
 		clearTimeout(timer);
-		root.render("match found!!! Please wait for us to process you into the loading room.");
+		root.render("Match found! Please wait for us to process you into the collab room.");
 
-		// TRANSPORT USER TO ROOM! AKA COLLABLEET?
+          // TRANSPORT USER TO ROOM! AKA COLLABLEET?
+          sessionStorage.setItem("collabRoomId", collabRoomId)
+          window.location.replace(`/collab`);
 	  });
 }
 
