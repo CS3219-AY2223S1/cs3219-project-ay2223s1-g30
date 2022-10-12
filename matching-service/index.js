@@ -4,7 +4,7 @@ import { createServer } from 'http';
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import axios from "axios";
-import Document from "./model/document-model.js";
+import DocumentModel from "./model/document-model.js";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -113,7 +113,7 @@ io.on("connection", (socket) => {
         })
 
         socket.on("save-document", async data => {
-            await Document.findByIdAndUpdate(documentId, {data})
+            await DocumentModel.findByIdAndUpdate(documentId, {data})
         })
     })
 
@@ -127,12 +127,12 @@ const defaultValue = ""
 async function findDocument(id) {
     if (id == null) return
 
-    const document = await Document.findById(id)
+    const document = await DocumentModel.findById(id)
     if (document) {
         return document
     } else {
-        console.log(`id not found: ${id}`)
-        return await Document.create({ _id: id, data: defaultValue })
+        // No existing document found. Create a new document.
+        return await DocumentModel.create({ _id: id, data: defaultValue })
     }
 }
 
