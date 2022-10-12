@@ -26,8 +26,8 @@ function CollabLeet() {
 		}}>
 
 		<ButtonGroup variant="contained" aria-label="outlined primary button group">
-				<Button component={Link} to="/Selection">Go back to Selection Page</Button>
-			</ButtonGroup>
+                    <Button component={Link} to="/Selection">Go back to Selection Page</Button>
+		</ButtonGroup>
 			</div>
 		</Box>
     )

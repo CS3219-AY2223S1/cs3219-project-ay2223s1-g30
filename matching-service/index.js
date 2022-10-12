@@ -68,18 +68,10 @@ io.on("connection", (socket) => {
                 socket.emit('matchSuccess', collabRoom);
                 await sleep(1000); // Need to set both calls apart since they could both end up creating a new room. TODO: Find alternative
                 io.to(pendingUserSocketId).emit('matchSuccess', collabRoom);
-
-                // Delete match after pair has been formed
-                const URL_DELETE_MATCH = URL_MATCH_SERVICE + "/" + currentUser;
-                await axios.delete(URL_DELETE_MATCH, { currentUser })
-                    .catch((err) => {
-                        console.log(`Axios error in matching-service/index.js (leave-match): ${err}`);
-                    });
             }
         } else {
-            console.log("Axios: No result data.")
+            console.log("Axios: (match) No result data.")
         }
-
     })
 
     socket.on('leave-match', async (currentUser) => {
@@ -97,7 +89,7 @@ io.on("connection", (socket) => {
             const collabRoom = res.data.collabRoomSocketId;
             socket.emit('matchFail', collabRoom)
         } else {
-            console.log("Axios: No result data.")
+            console.log("Axios: (leave-match) No result data.")
         }
 
     })
