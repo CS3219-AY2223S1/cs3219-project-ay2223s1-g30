@@ -93,14 +93,13 @@ function CollabLeet() {
 		});
 		setQuestions(res.data);
 		sessionStorage.setItem("questions", res.data);
+		console.log("You successfully retrieved questions");
 	};
 
 	const findQuestion = async () => {
 		if (user !== "" && partner !== "") {
-			console.log("You successfully retrieved questions");
 			for (let i = 0; i < questions.length; i++) {
-				console.log("SETTING QNS");
-
+				console.log("Finding question");
 				if (questions[i].difficulty === difficulty) {
 					if (room === null) {
 						if (difficulty === "easy") {
@@ -227,8 +226,8 @@ function CollabLeet() {
 		if (question === "") {
 			init();
 		} else {
-			console.log("Question:", question);
 			setQuestion(question);
+			console.log("Question:", question);
 		}
 	});
 

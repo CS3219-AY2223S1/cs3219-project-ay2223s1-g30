@@ -1,4 +1,10 @@
-import { checkUser, createUser, deleteUser, updateUser } from "./repository.js";
+import {
+	checkUser,
+	createUser,
+	deleteUser,
+	updatePassword,
+	updateHistory,
+} from "./repository.js";
 
 //need to separate orm functions from repository to decouple business logic from persistence
 export async function ormCreateUser(username, password) {
@@ -32,12 +38,26 @@ export async function ormDeleteUser(username) {
 	}
 }
 
-export async function ormUpdateUser(id, password) {
+export async function ormUpdatePassword(id, password) {
 	try {
-		const updatedUser = await updateUser(id, { password: password });
+		const updatedUser = await updatePassword(id, { password: password });
 		return updatedUser;
 	} catch (err) {
 		console.log("ERROR: Could not update user");
+		return { err };
+	}
+}
+
+export async function ormUpdateHistory(id, easy, medium, hard) {
+	try {
+		const updatedHistory = await updateHistory(id, {
+			easy: easy,
+			medium: medium,
+			hard: hard,
+		});
+		return updatedHistory;
+	} catch (err) {
+		console.log("ERROR: Could not update history");
 		return { err };
 	}
 }

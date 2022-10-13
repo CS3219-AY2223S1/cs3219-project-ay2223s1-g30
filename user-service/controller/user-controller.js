@@ -1,8 +1,9 @@
 import { ormCreateUser as _createUser } from "../model/user-orm.js";
 import { ormCheckUser as _checkUser } from "../model/user-orm.js";
 import { ormDeleteUser as _deleteUser } from "../model/user-orm.js";
-import { ormUpdateUser as _updateUser } from "../model/user-orm.js";
+import { ormUpdatePassword as _updatePassword } from "../model/user-orm.js";
 import { ormCreateToken as _createToken } from "../model/token-orm.js";
+import { ormUpdateHistory as _updateHistory } from "../model/user-orm.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../model/user-model.js";
@@ -212,7 +213,7 @@ export async function getProtectedMe(req, res) {
 	});
 }
 
-export async function updateUser(req, res) {
+export async function updatePassword(req, res) {
 	try {
 		const { username, password } = req.body;
 		const user = await _checkUser(username);
@@ -241,7 +242,7 @@ export async function updateUser(req, res) {
 			// Hash password
 			const salt = await bcrypt.genSalt(10);
 			const hashedPassword = await bcrypt.hash(password, salt);
-			const resp = await _updateUser(user.id, hashedPassword);
+			const resp = await _updatePassword(user.id, hashedPassword);
 			console.log(hashedPassword);
 			console.log(resp);
 			if (resp.err) {
@@ -269,3 +270,38 @@ const generateToken = (id) => {
 		expiresIn: "1d",
 	});
 };
+
+// Update question history
+export async function updateHistory(req, res) {
+	try {
+		const { username, easy, medium, hard } = req.body;
+		const user = await _checkUser(username);
+
+		if (!user) {
+			return res.status(409).json({
+				message:
+					"User not found! Failed to update user question history.",
+			});
+		} else {
+			const resp = await _updateHistory(user.id, easy, medium, hard);
+			console.log(resp);
+			if (resp.err) {
+				return res.status(400).json({
+					message: "Could not update user question history!",
+				});
+			} else {
+				console.log(
+					`Updated user ${username}'s question history successfully!`
+				);
+				return res.status(200).json({
+					message: `Updated user ${username}'s question history successfully!`,
+				});
+			}
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
+	}
+}

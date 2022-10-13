@@ -1,5 +1,5 @@
 import UserModel from "./user-model.js";
-import TokenModel from "./token-model.js"
+import TokenModel from "./token-model.js";
 import "dotenv/config";
 
 //Set up mongoose connection
@@ -27,14 +27,18 @@ export async function deleteUser(params) {
 	return UserModel.deleteOne(params);
 }
 
-export async function updateUser(param1, param2) {
+export async function updatePassword(param1, param2) {
 	return UserModel.findByIdAndUpdate(param1, param2);
 }
 
 export async function createToken(params) {
-	return new TokenModel(params)
+	return new TokenModel(params);
 }
 
 export async function checkToken(params) {
-	return TokenModel.findOne(params)
+	return TokenModel.findOne(params);
+}
+
+export async function updateHistory(param1, param2) {
+	return UserModel.findByIdAndUpdate(param1, param2);
 }
