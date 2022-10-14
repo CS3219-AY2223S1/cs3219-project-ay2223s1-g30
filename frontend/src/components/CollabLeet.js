@@ -30,6 +30,7 @@ import {
 	URL_QUESTION_SVC,
 	URL_MATCHING_SERVICE,
 	URL_USER_SVC_DASHBOARD,
+	URL_USER_SVC,
 } from "../configs";
 import { STATUS_CODE_OKAY, STATUS_CODE_CONFLICT } from "../constants";
 import { Link } from "react-router-dom";
@@ -92,12 +93,11 @@ function CollabLeet() {
 			console.log("Please try again later");
 		});
 		setQuestions(res.data);
-		sessionStorage.setItem("questions", res.data);
 		console.log("You successfully retrieved questions");
 	};
 
 	const findQuestion = async () => {
-		if (user !== "" && partner !== "") {
+		if (user !== "" && partner !== "" && questions !== "") {
 			for (let i = 0; i < questions.length; i++) {
 				console.log("Finding question");
 				if (questions[i].difficulty === difficulty) {
@@ -105,27 +105,51 @@ function CollabLeet() {
 						if (difficulty === "easy") {
 							if (user.easy === undefined) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							} else if (!user.easy.includes(questions[i].id)) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							}
 						} else if (difficulty === "medium") {
 							if (user.medium === undefined) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							} else if (!user.medium.includes(questions[i].id)) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							}
 						} else {
 							if (user.difficult === undefined) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							} else if (
 								!user.difficult.includes(questions[i].id)
 							) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							}
 						}
@@ -136,12 +160,20 @@ function CollabLeet() {
 								partner.easy === undefined
 							) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							} else if (
 								!user.easy.includes(questions[i].id) &&
 								!partner.easy.includes(questions[i].id)
 							) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							}
 						} else if (difficulty === "medium") {
@@ -150,12 +182,20 @@ function CollabLeet() {
 								partner.medium === undefined
 							) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							} else if (
 								!user.medium.includes(questions[i].id) &&
 								!partner.medium.includes(questions[i].id)
 							) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							}
 						} else {
@@ -164,19 +204,26 @@ function CollabLeet() {
 								partner.difficult === undefined
 							) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							} else if (
 								!user.difficult.includes(questions[i].id) &&
 								!partner.difficult.includes(questions[i].id)
 							) {
 								setQuestion(questions[i]);
+								sessionStorage.setItem(
+									"question",
+									JSON.stringify(questions[i])
+								);
 								break;
 							}
 						}
 					}
 				}
 			}
-			sessionStorage.setItem("question", question);
 			console.log("Got the question");
 		}
 	};
@@ -187,6 +234,7 @@ function CollabLeet() {
 			const res = await axios.get(endpoint, { username }).catch((err) => {
 				if (err.status === STATUS_CODE_CONFLICT) {
 					setRoom(null);
+					setPartner(null);
 				} else {
 					console.log("Please try again later");
 				}
@@ -199,11 +247,11 @@ function CollabLeet() {
 	};
 
 	useEffect(() => {
-		setUsername(sessionStorage.getItem("username"));
-		setDifficulty(sessionStorage.getItem("difficulty"));
 		async function init() {
 			console.log("No question");
 			try {
+				setUsername(sessionStorage.getItem("username"));
+				setDifficulty(sessionStorage.getItem("difficulty"));
 				if (user === "") {
 					await getUser();
 				}
@@ -223,10 +271,14 @@ function CollabLeet() {
 				console.log(err);
 			}
 		}
-		if (question === "") {
+		if (sessionStorage.getItem("question") === null) {
 			init();
 		} else {
-			setQuestion(question);
+			console.log(
+				"QUESTION:",
+				JSON.parse(sessionStorage.getItem("question"))
+			);
+			setQuestion(JSON.parse(sessionStorage.getItem("question")));
 			console.log("Question:", question);
 		}
 	});

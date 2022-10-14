@@ -12,6 +12,9 @@ import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import CircularProgressWithLabel from "./CircularProgress";
 import { socket } from "./services/socket";
+import { URL_USER_SVC, URL_USER_SVC_DASHBOARD } from "../configs";
+import axios from "axios";
+import { STATUS_CODE_OKAY, STATUS_CODE_CONFLICT } from "../constants";
 
 function SelectionPage() {
 	console.log("Attempting to connect");
@@ -29,6 +32,17 @@ function SelectionPage() {
 			console.log(" connected on socket id: " + socket.id);
 			handleSocketID(socket.id);
 		});
+		if (sessionStorage.getItem("question") !== "") {
+			async function update() {
+				try {
+					await updateHistory();
+					sessionStorage.removeItem("question");
+				} catch (err) {
+					console.log(err);
+				}
+			}
+			update();
+		}
 	}, []);
 
 	console.log(socketID);
@@ -190,6 +204,69 @@ const handleMatching = (socket, difficulty) => {
 const handleSolo = (difficulty) => {
 	sessionStorage.setItem("difficulty", difficulty);
 	console.log("Selected Solo with Difficulty: " + difficulty);
+};
+
+const updateHistory = async () => {
+	const user = await getUser();
+	const username = sessionStorage.getItem("username");
+	const question = JSON.parse(sessionStorage.getItem("question"));
+	const difficulty = sessionStorage.getItem("difficulty");
+	if (
+		user !== "" &&
+		question !== "" &&
+		difficulty !== "" &&
+		username != null
+	) {
+		console.log("UPDATING HISTORY");
+		const endpoint = URL_USER_SVC + "/history";
+		const easy = user.easy;
+		const medium = user.medium;
+		const hard = user.hard;
+		console.log(question, user);
+		if (difficulty === "easy") {
+			if (!easy.includes(question.id)) {
+				easy.push(question.id);
+			}
+		} else if (difficulty === "medium") {
+			if (!medium.include(question.id)) {
+				medium.push(question.id);
+			}
+		} else {
+			if (!hard.include(question.id)) {
+				hard.push(question.id);
+			}
+		}
+
+		const res = await axios
+			.post(endpoint, { username, easy, hard, medium })
+			.catch((err) => {
+				if (err.status === STATUS_CODE_CONFLICT) {
+				} else {
+					console.log("Please try again later");
+				}
+			});
+		if (res && res.status === STATUS_CODE_OKAY) {
+			console.log("You successfully updated the user's question history");
+		}
+	}
+};
+
+const getUser = async () => {
+	const username = sessionStorage.getItem("username");
+	if (username !== "") {
+		const endpoint = URL_USER_SVC_DASHBOARD;
+		const res = await axios.post(endpoint, { username }).catch((err) => {
+			if (err.status === STATUS_CODE_CONFLICT) {
+				console.log("User not found");
+			} else {
+				console.log("Please try again later");
+			}
+		});
+		if (res && res.status === STATUS_CODE_OKAY) {
+			return res.data;
+			console.log("You successfully retrieved user1");
+		}
+	}
 };
 
 export default SelectionPage;
