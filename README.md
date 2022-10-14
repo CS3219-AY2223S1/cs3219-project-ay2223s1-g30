@@ -14,6 +14,16 @@ This is a template repository for CS3219 project.
 8. Install npm packages using `npm i`.
 9. Run User Service using `npm run dev`.
 
+## Matching Service
+
+1. Create a `.env` file.
+2. Enter the CLOUD DB URL created as `DB_CLOUD_URI` in `.env` file.
+3. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
+4. Enter `ENV=DEV` in `.env` file.
+5. Enter `PORT=http://localhost:3000` in `.env` file.
+6. Install npm packages using `npm i`.
+7. Run Question Service using `npm run dev`.
+
 ## Question Service
 
 1. Create a `.env` file.
