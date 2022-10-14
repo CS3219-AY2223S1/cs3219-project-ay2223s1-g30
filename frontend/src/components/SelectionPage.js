@@ -228,11 +228,11 @@ const updateHistory = async () => {
 				easy.push(question.id);
 			}
 		} else if (difficulty === "medium") {
-			if (!medium.include(question.id)) {
+			if (!medium.includes(question.id)) {
 				medium.push(question.id);
 			}
 		} else {
-			if (!hard.include(question.id)) {
+			if (!hard.includes(question.id)) {
 				hard.push(question.id);
 			}
 		}

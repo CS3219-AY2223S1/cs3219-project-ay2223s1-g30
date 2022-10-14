@@ -271,15 +271,17 @@ function CollabLeet() {
 				console.log(err);
 			}
 		}
-		if (sessionStorage.getItem("question") === null) {
-			init();
-		} else {
-			console.log(
-				"QUESTION:",
-				JSON.parse(sessionStorage.getItem("question"))
-			);
-			setQuestion(JSON.parse(sessionStorage.getItem("question")));
-			console.log("Question:", question);
+		if (question === "") {
+			if (sessionStorage.getItem("question") === null) {
+				init();
+			} else {
+				console.log(
+					"QUESTION:",
+					JSON.parse(sessionStorage.getItem("question"))
+				);
+				setQuestion(JSON.parse(sessionStorage.getItem("question")));
+				console.log("Question:", question);
+			}
 		}
 	});
 
