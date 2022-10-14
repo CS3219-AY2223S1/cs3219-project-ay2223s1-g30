@@ -96,6 +96,7 @@ function Dashboard() {
 
 	// Check on landing to make sure cookie are still valid
 	const verifyCookie = async () => {
+		setIsCookieVerified(true);
 		const endpoint = URL_USER_SVC_DASHBOARD;
 		const res = await axios.get(endpoint).catch((err) => {
 			if (err.response.status === STATUS_CODE_UNAUTHORIZED) {
@@ -324,7 +325,7 @@ function Dashboard() {
 
 								{/* Difficulty Selection */}
 								<Grid item xs = {12}  md = {8} lg = {9}>
-									<Paper
+									<Paper onClick={event => window.location.replace(`/selection`)}
 										sx = {{
 											p:2,
 											display: 'flex',
@@ -332,7 +333,7 @@ function Dashboard() {
 											height: 240,
 										}}
 									>
-										Selection
+										Start LeetCode now !
 									</Paper>
 								</Grid>
 

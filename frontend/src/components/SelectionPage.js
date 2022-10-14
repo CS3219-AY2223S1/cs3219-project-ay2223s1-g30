@@ -4,14 +4,18 @@ import {
 	ButtonGroup,
 	Typography,
 	Card,
+	Toolbar,
 	CardContent,
 	CardActionArea,
 	Grid,
 } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
 import {socket} from "./services/socket";
 import {TimerDialog} from "./Dialog";
+import MuiAppBar from "@mui/material/AppBar"
+import { spacing } from '@mui/system';
 
 function SelectionPage() {
 
@@ -19,8 +23,7 @@ function SelectionPage() {
 	// client-side
 	const [socketID, handleSocketID] = useState("");
     const [difficulty, handleDifficulty] = useState("");
-    //const [username, setUsername] = useState("");
-
+    const username = sessionStorage.getItem("username");
 	useEffect(() => {
 		socket.emit('HELLO_THERE');
 		socket.on("connect", () => {
@@ -33,16 +36,36 @@ function SelectionPage() {
 	console.log(socketID);
     return (
         <Box display={"flex"} flexDirection={"column"} width={"100%"}>
-			<Typography variant={"h3"} marginBottom={"10rem"}>
-				LeetCode Selection Page
-			</Typography>
-			<Grid container>
-				<Grid item>
+			<MuiAppBar position = 'absolute'>
+				<Toolbar
+					sx = {{
+						pr: '24px',
+					}}>
+					<ArrowBackIcon onClick={event => window.location.replace(`/dashboard`)}/>
+						<Typography
+							component = 'h1'
+							variant = 'h6'
+							color = 'inherit'
+							noWrap
+							sx = {{ flexGrow: 1 }}
+							align="center">
+						LeetCode Selection Page <code>{username}</code>
+					</Typography>
+				</Toolbar>
+			</MuiAppBar>
+			<Grid container
+				  justifyContent="center" 
+				  flexDirection = "row"
+				  max-height={12}
+				  max-width={12}
+				  spacing={12}
+				  sx={{pt:12}}>
+				<Grid item md = {4} lg = {2}>
 					<Card>
 						<CardActionArea onClick={() => handleDifficulty("easy")}>
 							<CardContent>
 								<Typography variant={"h5"} gutterBottom component="div">
-									Easy Difficulty LeetCode
+									Easy
 								</Typography>
 								<Typography variant={"body2"} gutterBottom component="div">
 									Select this difficulty if you're new to programming!
@@ -51,26 +74,26 @@ function SelectionPage() {
 						</CardActionArea>
 					</Card>
 			</Grid>
-		<Grid item>
+		<Grid item md = {4} lg = {2} xs>
 			<Card>
 				<CardActionArea onClick={() => handleDifficulty("medium")}>
 					<CardContent>
 						<Typography variant={"h5"} gutterBottom component="div">
-							Medium Difficulty LeetCode
+							Medium
 						</Typography>
 						<Typography variant={"body2"} gutterBottom component="div">
-							Select this if you are semi-godlike in programming!
+							Select this difficulty if you are pro in programming!
 						</Typography>
 					</CardContent>
 				</CardActionArea>
 			</Card>
 		</Grid>
-			<Grid item>
+			<Grid item md = {4} lg = {2} xs>
 				<Card>
 					<CardActionArea onClick={() => handleDifficulty("hard")}>
 						<CardContent>
 							<Typography variant={"h5"} gutterBottom component="div">
-								Hard Difficulty LeetCode
+								Hard
 							</Typography>
 							<Typography variant={"body2"} gutterBottom component="div">
 								Select this difficulty if you are god in programming!
@@ -80,12 +103,16 @@ function SelectionPage() {
 				</Card>
 			</Grid>
 		</Grid>
-			<Box>
-				<ButtonGroup variant="contained" aria-label="outlined primary button group">
-					<Button fullWidth={true} onClick={() => handleSolo(socket, difficulty)}>Practice LeetCode Alone!</Button>
-                    <Button fullWidth={true} onClick={() => handleMatching(socket, difficulty)}>Collaborate with others!</Button>
-				</ButtonGroup>
-			</Box>
+		<Grid container
+				justifyContent="center" 
+				flexDirection = "row"
+				spacing={12}
+				sx={{pt:12}}>
+			<ButtonGroup variant="contained" aria-label="outlined primary button group">
+				<Button fullWidth={true} onClick={() => handleSolo(socket, difficulty)}>Solo</Button>
+				<Button fullWidth={true} onClick={() => handleMatching(socket, difficulty)}>Collab</Button>
+			</ButtonGroup>
+		</Grid>
 			<div id="timer"></div>
 		</Box>
 
