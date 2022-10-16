@@ -96,7 +96,6 @@ function Dashboard() {
 
 	// Check on landing to make sure cookie are still valid
 	const verifyCookie = async () => {
-		setIsCookieVerified(true);
 		const endpoint = URL_USER_SVC_DASHBOARD;
 		const res = await axios.get(endpoint).catch((err) => {
 			if (err.response.status === STATUS_CODE_UNAUTHORIZED) {
