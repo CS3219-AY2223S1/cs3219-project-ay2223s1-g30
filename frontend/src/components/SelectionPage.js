@@ -1,13 +1,13 @@
 import {
 	Box,
 	Button,
-	ButtonGroup,
 	Typography,
 	Card,
 	Toolbar,
 	CardContent,
 	CardActionArea,
 	Grid,
+	IconButton,
 } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useState, useEffect } from "react";
@@ -16,7 +16,6 @@ import {socket} from "./services/socket";
 import {TimerDialog} from "./Dialog";
 import MuiAppBar from "@mui/material/AppBar"
 import GroupsIcon from '@mui/icons-material/Groups';
-import PersonIcon from '@mui/icons-material/Person';
 import Person from "@mui/icons-material/Person";
 
 function SelectionPage() {
@@ -43,7 +42,9 @@ function SelectionPage() {
 					sx = {{
 						pr: '24px',
 					}}>
-					<ArrowBackIcon onClick={event => window.location.replace(`/dashboard`)}/>
+						<IconButton sx={{ "&:hover": { color: "grey" } }} onClick={event => window.location.replace(`/dashboard`)}>
+							<ArrowBackIcon/>
+						</IconButton>
 						<Typography
 							component = 'h1'
 							variant = 'h6'
@@ -113,7 +114,7 @@ function SelectionPage() {
 					<Button 
 					variant="contained" 
 					size={"large"} 
-					startIcon={<PersonIcon/>}
+					startIcon={<Person/>}
 					onClick={() => handleSolo(socket, difficulty)}>Solo</Button>
 				</Grid>
 				<Grid item>
