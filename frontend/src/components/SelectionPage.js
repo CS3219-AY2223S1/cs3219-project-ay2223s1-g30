@@ -15,7 +15,9 @@ import { createRoot } from 'react-dom/client';
 import {socket} from "./services/socket";
 import {TimerDialog} from "./Dialog";
 import MuiAppBar from "@mui/material/AppBar"
-import { spacing } from '@mui/system';
+import GroupsIcon from '@mui/icons-material/Groups';
+import PersonIcon from '@mui/icons-material/Person';
+import Person from "@mui/icons-material/Person";
 
 function SelectionPage() {
 
@@ -49,17 +51,15 @@ function SelectionPage() {
 							noWrap
 							sx = {{ flexGrow: 1 }}
 							align="center">
-						LeetCode Selection Page <code>{username}</code>
+						PeerPrep Selection Page <code>{username}</code>
 					</Typography>
 				</Toolbar>
 			</MuiAppBar>
 			<Grid container
 				  justifyContent="center" 
 				  flexDirection = "row"
-				  max-height={12}
-				  max-width={12}
 				  spacing={12}
-				  sx={{pt:12}}>
+				  sx={{pt:12, display: 'flex', flexDirection: 'row'}}>
 				<Grid item md = {4} lg = {2}>
 					<Card>
 						<CardActionArea onClick={() => handleDifficulty("easy")}>
@@ -68,7 +68,7 @@ function SelectionPage() {
 									Easy
 								</Typography>
 								<Typography variant={"body2"} gutterBottom component="div">
-									Select this difficulty if you're new to programming!
+									Select this difficulty if you are new to programming!
 								</Typography>
 							</CardContent>
 						</CardActionArea>
@@ -105,13 +105,24 @@ function SelectionPage() {
 		</Grid>
 		<Grid container
 				justifyContent="center" 
+				alignItems="center"
+				display="flex" 
 				flexDirection = "row"
-				spacing={12}
 				sx={{pt:12}}>
-			<ButtonGroup variant="contained" aria-label="outlined primary button group">
-				<Button fullWidth={true} onClick={() => handleSolo(socket, difficulty)}>Solo</Button>
-				<Button fullWidth={true} onClick={() => handleMatching(socket, difficulty)}>Collab</Button>
-			</ButtonGroup>
+				<Grid sx={{mr:10}}>
+					<Button 
+					variant="contained" 
+					size={"large"} 
+					startIcon={<PersonIcon/>}
+					onClick={() => handleSolo(socket, difficulty)}>Solo</Button>
+				</Grid>
+				<Grid item>
+					<Button 
+					variant="contained" 
+					size={"large"} 
+					startIcon={<GroupsIcon/>} 
+					onClick={() => handleMatching(socket, difficulty)}>Collab</Button>
+				</Grid>
 		</Grid>
 			<div id="timer"></div>
 		</Box>
@@ -153,6 +164,7 @@ const handleMatching = (socket, difficulty) => {
 
 const handleSolo = (difficulty) => {
 	console.log("Selected Solo with Difficulty: " + difficulty);
+	alert("You have clicked solo!");
 }
 
 // Creation of timer
@@ -165,7 +177,8 @@ const timer = (root, userName, difficulty) => {
 const handleTimeout = (root, userName, difficulty) => {
 	console.log("socket emit: leave-match for: " + userName + " queuing for difficulty: " + difficulty);
 	socket.emit("leave-match", userName);
-	root.render("match not found!! please try again!");
+	root.render("");
+	alert("Match not found, please try again!")
 }
 
 export default SelectionPage
