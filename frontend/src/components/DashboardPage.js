@@ -15,11 +15,8 @@ import {
 	Toolbar,
 	List,
 	Divider,
-	IconButton,
-	Badge,
 	Container,
 	Paper,
-	styled
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer"
 import MuiAppBar from "@mui/material/AppBar"
@@ -324,15 +321,18 @@ function Dashboard() {
 
 								{/* Difficulty Selection */}
 								<Grid item xs = {12}  md = {8} lg = {9}>
-									<Paper
+									<Paper  onClick={event => window.location.replace(`/selection`)}
 										sx = {{
 											p:2,
 											display: 'flex',
 											flexDirection: 'column',
 											height: 240,
+											':hover': {
+												boxShadow: 20,
+											  },
 										}}
 									>
-										Selection
+										Start PeerPrep now !
 									</Paper>
 								</Grid>
 

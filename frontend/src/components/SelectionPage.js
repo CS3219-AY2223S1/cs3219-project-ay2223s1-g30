@@ -1,17 +1,22 @@
 import {
 	Box,
 	Button,
-	ButtonGroup,
 	Typography,
 	Card,
+	Toolbar,
 	CardContent,
 	CardActionArea,
 	Grid,
+	IconButton,
 } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
-import CircularProgressWithLabel from "./CircularProgress";
 import {socket} from "./services/socket";
+import {TimerDialog} from "./Dialog";
+import MuiAppBar from "@mui/material/AppBar"
+import GroupsIcon from '@mui/icons-material/Groups';
+import Person from "@mui/icons-material/Person";
 
 function SelectionPage() {
 
@@ -19,8 +24,7 @@ function SelectionPage() {
 	// client-side
 	const [socketID, handleSocketID] = useState("");
     const [difficulty, handleDifficulty] = useState("");
-    //const [username, setUsername] = useState("");
-
+    const username = sessionStorage.getItem("username");
 	useEffect(() => {
 		socket.emit('HELLO_THERE');
 		socket.on("connect", () => {
@@ -33,44 +37,72 @@ function SelectionPage() {
 	console.log(socketID);
     return (
         <Box display={"flex"} flexDirection={"column"} width={"100%"}>
-			<Typography variant={"h3"} marginBottom={"10rem"}>
-				LeetCode Selection Page
-			</Typography>
-			<Grid container>
-				<Grid item>
+			<MuiAppBar position = 'absolute'>
+				<Toolbar
+					sx = {{
+						pr: '24px',
+					}}>
+						<IconButton 
+							sx={{ 
+								color:"white",
+							':hover': {
+								bgcolor: "white",
+								color: "black",
+								boxShadow: 20,
+							  },
+							  }} onClick={event => window.location.replace(`/dashboard`)}>
+							<ArrowBackIcon/>
+						</IconButton>
+						<Typography
+							component = 'h1'
+							variant = 'h6'
+							color = 'inherit'
+							noWrap
+							sx = {{ flexGrow: 1 }}
+							align="center">
+						PeerPrep Selection Page <code>{username}</code>
+					</Typography>
+				</Toolbar>
+			</MuiAppBar>
+			<Grid container
+				  justifyContent="center" 
+				  flexDirection = "row"
+				  spacing={12}
+				  sx={{pt:12, display: 'flex', flexDirection: 'row'}}>
+				<Grid item md = {4} lg = {2}>
 					<Card>
 						<CardActionArea onClick={() => handleDifficulty("easy")}>
 							<CardContent>
 								<Typography variant={"h5"} gutterBottom component="div">
-									Easy Difficulty LeetCode
+									Easy
 								</Typography>
 								<Typography variant={"body2"} gutterBottom component="div">
-									Select this difficulty if you're new to programming!
+									Select this difficulty if you are new to programming!
 								</Typography>
 							</CardContent>
 						</CardActionArea>
 					</Card>
 			</Grid>
-		<Grid item>
+		<Grid item md = {4} lg = {2} xs>
 			<Card>
 				<CardActionArea onClick={() => handleDifficulty("medium")}>
 					<CardContent>
 						<Typography variant={"h5"} gutterBottom component="div">
-							Medium Difficulty LeetCode
+							Medium
 						</Typography>
 						<Typography variant={"body2"} gutterBottom component="div">
-							Select this if you are semi-godlike in programming!
+							Select this difficulty if you are pro in programming!
 						</Typography>
 					</CardContent>
 				</CardActionArea>
 			</Card>
 		</Grid>
-			<Grid item>
+			<Grid item md = {4} lg = {2} xs>
 				<Card>
 					<CardActionArea onClick={() => handleDifficulty("hard")}>
 						<CardContent>
 							<Typography variant={"h5"} gutterBottom component="div">
-								Hard Difficulty LeetCode
+								Hard
 							</Typography>
 							<Typography variant={"body2"} gutterBottom component="div">
 								Select this difficulty if you are god in programming!
@@ -80,12 +112,41 @@ function SelectionPage() {
 				</Card>
 			</Grid>
 		</Grid>
-			<Box>
-				<ButtonGroup variant="contained" aria-label="outlined primary button group">
-					<Button fullWidth={true} onClick={() => handleSolo(socket, difficulty)}>Practice LeetCode Alone!</Button>
-                    <Button fullWidth={true} onClick={() => handleMatching(socket, difficulty)}>Collaborate with others!</Button>
-				</ButtonGroup>
-			</Box>
+		<Grid container
+				justifyContent="center" 
+				alignItems="center"
+				display="flex" 
+				flexDirection = "row"
+				sx={{pt:12}}>
+				<Grid sx={{mr:10}}>
+					<Button 
+					variant="contained" 
+					size={"large"} 
+					startIcon={<Person/>}
+					sx={{ 
+						color:"white",
+					':hover': {
+						bgcolor: "white",
+						color: "black",
+						boxShadow: 20,}
+					}}
+					onClick={() => handleSolo(socket, difficulty)}>Solo</Button>
+				</Grid>
+				<Grid item>
+					<Button 
+					variant="contained" 
+					size={"large"} 
+					startIcon={<GroupsIcon/>} 
+					sx={{ 
+						color:"white",
+					':hover': {
+						bgcolor: "white",
+						color: "black",
+						boxShadow: 20,}
+					}}
+					onClick={() => handleMatching(socket, difficulty)}>Collab</Button>
+				</Grid>
+		</Grid>
 			<div id="timer"></div>
 		</Box>
 
@@ -107,16 +168,11 @@ const handleMatching = (socket, difficulty) => {
 
 	// Timer object on ReactDOM
 	let container = document.getElementById('timer');
-	let root = createRoot(container);
-    root.render(<CircularProgressWithLabel />);
+	let root = createRoot(container);;
 
 	// Timer for 30seconds timeout for socket.emit("match-failed")
-	const timer = setTimeout(() => {
-        console.log("socket emit: leave-match for: " + username + " queuing for difficulty: " + difficulty);
-        socket.emit("leave-match", username);
-		root.render("match not found!! please try again!");
-	  }, 30000);
-
+	let timerID = timer(root, username, difficulty);
+	root.render(<TimerDialog data-param={[true, timerID, socket, username]}/>);
 
 	  // If get match-success, clearTimeout
 	  socket.on("matchSuccess", (collabRoomId) => {
@@ -131,6 +187,21 @@ const handleMatching = (socket, difficulty) => {
 
 const handleSolo = (difficulty) => {
 	console.log("Selected Solo with Difficulty: " + difficulty);
+	alert("You have clicked solo!");
+}
+
+// Creation of timer
+const timer = (root, userName, difficulty) => {
+	const timerID = setTimeout(handleTimeout, 30000, root, userName, difficulty);
+	return timerID;
+}
+
+// Handling 30s timeout
+const handleTimeout = (root, userName, difficulty) => {
+	console.log("socket emit: leave-match for: " + userName + " queuing for difficulty: " + difficulty);
+	socket.emit("leave-match", userName);
+	root.render("");
+	alert("Match not found, please try again!");
 }
 
 export default SelectionPage
