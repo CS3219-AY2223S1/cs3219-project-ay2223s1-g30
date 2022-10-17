@@ -27,31 +27,13 @@ export async function createMatch(req, res) {
 		if (difficulty && currentUser && currentUserSocketId) {
 			const matchExistUser1 = await _checkMatchUser1(currentUser);
 			const matchExistUser2 = await _checkMatchUser2(currentUser);
-			// If user is already in a match, send them to the room.
-			if (matchExistUser1 && !matchExistUser1.isPendingMatch) {
-				const existingRoomId = matchExistUser1.collabRoomSocketId;
+			if (matchExistUser1 || matchExistUser2) {
 				console.log(
-					`${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`
-				);
-				return res.status(201).json({
-					message: `${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`,
-					collabRoomSocketId: existingRoomId,
-				});
-			} else if (matchExistUser2 && !matchExistUser2.isPendingMatch) {
-				const existingRoomId = matchExistUser2.collabRoomSocketId;
-				console.log(
-					`${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`
-				);
-				return res.status(201).json({
-					message: `${currentUser} is already in a match! Existing Room Id: ${existingRoomId}`,
-					collabRoomSocketId: existingRoomId,
-				});
-			} else if (matchExistUser1 || matchExistUser2) {
-				console.log(
-					`Controller ERROR: currentUser (${currentUser}) is already in a pending match.`
+					`Controller ERROR: currentUser (${currentUser}) is already in a match. Please choose another user!`
 				);
 				return res.status(409).json({
-					message: `Controller ERROR: currentUser (${currentUser}) is already in a pending match.`,
+					message:
+						"Controller ERROR: currentUser is already in a match. Please choose another user!",
 				});
 			}
 
@@ -139,10 +121,12 @@ export async function createMatch(req, res) {
 					console.log(
 						"Controller ERROR: Could not create a new match!"
 					);
-					return res.status(400).json({
-						message:
-							"Controller ERROR: Could not create a new match!",
-					});
+					return res
+						.status(400)
+						.json({
+							message:
+								"Controller ERROR: Could not create a new match!",
+						});
 				} else {
 					console.log(
 						`Created new pendingMatch for ${currentUser} successfully! Difficulty: ${difficulty}`
@@ -158,17 +142,21 @@ export async function createMatch(req, res) {
 			console.log(
 				"Controller ERROR: Please provide at least difficulty, currentUser, and currentUserSocketId!"
 			);
-			return res.status(400).json({
-				message:
-					"Controller ERROR: Please provide at least difficulty, currentUser, and currentUserSocketId!",
-			});
+			return res
+				.status(400)
+				.json({
+					message:
+						"Controller ERROR: Please provide at least difficulty, currentUser, and currentUserSocketId!",
+				});
 		}
 	} catch (err) {
 		console.log(err);
-		return res.status(500).json({
-			message:
-				"Controller ERROR: Database failure when creating new match!",
-		});
+		return res
+			.status(500)
+			.json({
+				message:
+					"Controller ERROR: Database failure when creating new match!",
+			});
 	}
 }
 

@@ -15,8 +15,6 @@ import {
 	Toolbar,
 	List,
 	Divider,
-	IconButton,
-	Badge,
 	Container,
 	Paper,
 	styled,
@@ -348,6 +346,9 @@ function Dashboard() {
 											display: "flex",
 											flexDirection: "column",
 											height: 240,
+											':hover': {
+												boxShadow: 20,
+											  },
 										}}
 									>
 										Start PeerPrep now !

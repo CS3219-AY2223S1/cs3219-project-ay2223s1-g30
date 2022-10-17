@@ -4,11 +4,13 @@ import {
 	Typography,
 	Toolbar,
 	Card,
+	Toolbar,
 	CardContent,
 	CardActionArea,
 	Grid,
 	IconButton,
 } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { socket } from "./services/socket";
@@ -25,10 +27,8 @@ function SelectionPage() {
 	console.log("Attempting to connect");
 	// client-side
 	const [socketID, handleSocketID] = useState("");
-	const [difficulty, handleDifficulty] = useState("");
-	//const [username, setUsername] = useState("");
-
-	const username = sessionStorage.getItem("username");
+    const [difficulty, handleDifficulty] = useState("");
+    const username = sessionStorage.getItem("username");
 	useEffect(() => {
 		socket.emit("HELLO_THERE");
 		socket.on("connect", () => {
@@ -348,8 +348,8 @@ const getUser = async () => {
 			}
 		});
 		if (res && res.status === STATUS_CODE_OKAY) {
-			return res.data;
 			console.log("You successfully retrieved user1");
+			return res.data;
 		}
 	}
 };
