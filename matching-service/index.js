@@ -35,7 +35,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
 	/* socket.io options */
 	cors: {
-		origin: ["https://admin.socket.io", "*"],
+		origin: ["https://admin.socket.io", "http://localhost:3000"],
 		credentials: true,
 	},
 });
