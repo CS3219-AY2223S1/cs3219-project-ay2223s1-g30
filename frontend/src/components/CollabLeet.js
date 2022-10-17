@@ -1,43 +1,39 @@
 import {
 	Box,
-	Button,
-	ButtonGroup,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	TextField,
 	Typography,
-	Grid,
-	createTheme,
-	ThemeProvider,
-	CssBaseline,
 	Toolbar,
-	List,
-	Divider,
-	IconButton,
-	Badge,
-	Container,
+	Card,
+	CardContent,
 	Paper,
-	styled,
+	Tab,
+	IconButton,
+	List,
+	ListItem,
+	ListItemText,
+	Fab,
 } from "@mui/material";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
 	URL_QUESTION_SVC,
 	URL_MATCHING_SERVICE,
 	URL_USER_SVC_DASHBOARD,
-	URL_USER_SVC,
 } from "../configs";
 import { STATUS_CODE_OKAY, STATUS_CODE_CONFLICT } from "../constants";
-import { Link } from "react-router-dom";
 import TextEditor from "./Collab/TextEditor.js";
-import * as React from "react";
+import MuiAppBar from "@mui/material/AppBar";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ChatIcon from "@mui/icons-material/Chat";
 
 function CollabLeet() {
+	const floatingStyle = {
+		margin: 0,
+		top: "auto",
+		right: 20,
+		bottom: 20,
+		left: "auto",
+		position: "fixed",
+	};
 	const [difficulty, setDifficulty] = useState("");
 	const [question, setQuestion] = useState("");
 	const [questions, setQuestions] = useState("");
@@ -200,8 +196,8 @@ function CollabLeet() {
 							}
 						} else {
 							if (
-								user.difficult === undefined &&
-								partner.difficult === undefined
+								user.hard === undefined &&
+								partner.hard === undefined
 							) {
 								setQuestion(questions[i]);
 								sessionStorage.setItem(
@@ -210,8 +206,8 @@ function CollabLeet() {
 								);
 								break;
 							} else if (
-								!user.difficult.includes(questions[i].id) &&
-								!partner.difficult.includes(questions[i].id)
+								!user.hard.includes(questions[i].id) &&
+								!partner.hard.includes(questions[i].id)
 							) {
 								setQuestion(questions[i]);
 								sessionStorage.setItem(
@@ -287,21 +283,163 @@ function CollabLeet() {
 
 	return (
 		<Box>
-			<Typography variant={"h3"} marginBottom={"10rem"}>
-				Collaborative LeetCode
-			</Typography>
-			<div style={{ borderColor: "red", borderStyle: "solid" }}>
-				Question goes here
-				{question.id}
-				{question.difficulty}
-				{question.title}
-				{question.question}
-				{question.examples}
-				{question.constraints}
-			</div>
-
-			<TextEditor />
-
+			<MuiAppBar position="absolute">
+				<Toolbar
+					sx={{
+						pr: "24px",
+					}}
+				>
+					<IconButton
+						sx={{ "&:hover": { color: "grey" } }}
+						onClick={(event) =>
+							window.location.replace(`/selection`)
+						}
+					>
+						<ArrowBackIcon />
+					</IconButton>
+					<Typography
+						component="h1"
+						variant="h6"
+						color="inherit"
+						noWrap
+						sx={{ flexGrow: 1 }}
+						align="center"
+					>
+						PeerPrep Collaborative Page <code>{username}</code>
+					</Typography>
+				</Toolbar>
+			</MuiAppBar>
+			<Box sx={{ pt: 2 }}>
+				<Card
+					variant="outlined"
+					style={{
+						maxHeight: 200,
+						wordWrap: "break-word",
+						maxWidth: "100%",
+						overflow: "scroll",
+						overflowX: "hidden",
+					}}
+				>
+					<CardContent>
+						<Typography
+							variant={"h5"}
+							gutterBottom
+							component="div"
+							sx={{ pt: 2 }}
+						>
+							{question ? question.title + " " : null}(
+							{question
+								? question.difficulty.charAt(0).toUpperCase() +
+								  question.difficulty.slice(1)
+								: null}
+							)
+						</Typography>
+						<Paper
+							variant="outlined"
+							elevation={4}
+							sx={{ padding: "32px" }}
+						>
+							<Typography
+								variant={"body1"}
+								gutterBottom
+								component="div"
+							>
+								{question ? question.question : null}
+							</Typography>
+						</Paper>
+						<Typography
+							variant={"h5"}
+							gutterBottom
+							component="div"
+							sx={{ pt: 2 }}
+						>
+							Examples
+						</Typography>
+						{/* <Tab label="1" value="1"></Tab>
+						<Tab label="2" value="2"></Tab>
+						<Tab label="3" value="3"></Tab> */}
+						<Paper
+							variant="outlined"
+							elevation={4}
+							sx={{ padding: "32px" }}
+						>
+							<Typography
+								variant={"body1"}
+								gutterBottom
+								component="div"
+							>
+								{question
+									? question.examples.map((example) => {
+											return (
+												<div key={example}>
+													{example}
+												</div>
+											);
+									  })
+									: null}
+							</Typography>
+							{/* <Typography
+								variant={"body1"}
+								gutterBottom
+								component="div"
+							>
+								Input: nums = [3,2,4], target = 6 Output: [1,2]
+							</Typography>
+							<Typography
+								variant={"body1"}
+								gutterBottom
+								component="div"
+							>
+								Input: nums = [3,3], target = 6 Output: [0,1]
+							</Typography> */}
+						</Paper>
+						<Typography
+							variant={"h5"}
+							gutterBottom
+							component="div"
+							sx={{ pt: 2 }}
+						>
+							Constraints
+						</Typography>
+						<Paper
+							variant="outlined"
+							elevation={4}
+							sx={{ padding: "32px" }}
+						>
+							<Typography
+								variant={"body1"}
+								gutterBottom
+								component="div"
+							>
+								{question
+									? question.constraints.map((constraint) => {
+											return (
+												<div key={constraint}>
+													{constraint}
+												</div>
+											);
+									  })
+									: null}
+							</Typography>
+							{/* <List>
+								<ListItem>
+									<ListItemText primary="Example Constraint 1"></ListItemText>
+									<ListItemText primary="Example Constraint 2"></ListItemText>
+									<ListItemText primary="Example Constraint 3"></ListItemText>
+								</ListItem>
+							</List> */}
+							<Typography
+								variant={"body1"}
+								gutterBottom
+								component="div"
+							></Typography>
+						</Paper>
+					</CardContent>
+				</Card>
+			</Box>
+			<Box sx={{ pt: 2 }}>
+				<TextEditor />
+			</Box>
 			<div
 				style={{
 					display: "flex",
@@ -309,14 +447,9 @@ function CollabLeet() {
 					alignItems: "center",
 				}}
 			>
-				<ButtonGroup
-					variant="contained"
-					aria-label="outlined primary button group"
-				>
-					<Button component={Link} to="/Selection">
-						Go back to Selection Page
-					</Button>
-				</ButtonGroup>
+				<Fab color="primary" style={floatingStyle}>
+					<ChatIcon />
+				</Fab>
 			</div>
 		</Box>
 	);
