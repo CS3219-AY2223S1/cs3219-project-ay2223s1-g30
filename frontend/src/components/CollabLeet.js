@@ -1,8 +1,6 @@
 import {
 	Box,
-	Button,
 	Typography,
-	ButtonGroup,
 	Toolbar,
 	Card,
 	CardContent,
@@ -18,7 +16,6 @@ import { Link } from "react-router-dom";
 import TextEditor from "./Collab/TextEditor.js"
 import MuiAppBar from "@mui/material/AppBar"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ChatIcon from '@mui/icons-material/Chat';
 
 function CollabLeet() {
 	const username = sessionStorage.getItem("username");
@@ -126,9 +123,6 @@ function CollabLeet() {
 		  alignItems: 'center',
 		}}>
 			</div>
-		<Fab color="primary" style={floatingStyle}>
-			<ChatIcon/>
-		</Fab>
 		</Box>
     )
 }
