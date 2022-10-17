@@ -4,10 +4,10 @@ import cookieParser from "cookie-parser";
 import { authProtect } from "./middleware/authMiddleware.js";
 
 const app = express();
-const endpoint = process.env.PORT
+const endpoint = process.env.PORT;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({ credentials: true, origin: endpoint})); // config cors so that front-end can use
+app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
 app.options("*", cors());
 app.use(cookieParser());
 
@@ -16,9 +16,10 @@ import {
 	deleteUser,
 	loginUser,
 	getMe,
-	updateUser,
-    getProtectedMe,
-    logoutUser
+	updatePassword,
+	getProtectedMe,
+	logoutUser,
+	updateHistory,
 } from "./controller/user-controller.js";
 
 const router = express.Router();
@@ -27,12 +28,13 @@ const router = express.Router();
 router.get("/", (_, res) => res.send("Hello World from user-service"));
 router.post("/", createUser);
 router.delete("/:username", authProtect, deleteUser);
-router.put("/:username", authProtect ,updateUser);
+router.put("/:username", authProtect, updatePassword);
 router.get("/login", (_, res) => res.send("Hello World from login"));
 router.post("/login", loginUser);
 router.get("/dashboard/", authProtect, getProtectedMe);
 router.post("/dashboard/", getMe);
-router.post("/logout", logoutUser)
+router.post("/logout", logoutUser);
+router.post("/history", updateHistory);
 
 app.use("/api/user", router).all((_, res) => {
     res.setHeader("content-type", "application/json");

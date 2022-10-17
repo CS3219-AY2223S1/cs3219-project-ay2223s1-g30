@@ -1,8 +1,9 @@
 import { ormCreateUser as _createUser } from "../model/user-orm.js";
 import { ormCheckUser as _checkUser } from "../model/user-orm.js";
 import { ormDeleteUser as _deleteUser } from "../model/user-orm.js";
-import { ormUpdateUser as _updateUser } from "../model/user-orm.js";
-import { ormCreateToken as _createToken } from "../model/token-orm.js"
+import { ormUpdatePassword as _updatePassword } from "../model/user-orm.js";
+import { ormCreateToken as _createToken } from "../model/token-orm.js";
+import { ormUpdateHistory as _updateHistory } from "../model/user-orm.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../model/user-model.js";
@@ -74,7 +75,7 @@ export async function deleteUser(req, res) {
 					message: "User not found! Failed to delete user.",
 				});
 			} else {
-				const token = req.cookies.token
+				const token = req.cookies.token;
 				const response = await _createToken(token);
 				if (response.err) {
 					return res
@@ -119,7 +120,7 @@ export async function loginUser(req, res) {
 
 			if (user && (await bcrypt.compare(password, user.password))) {
 				const token = generateToken(user._id);
-				res.cookie('token', token, { httpOnly: true });
+				res.cookie("token", token, { httpOnly: true });
 				res.status(200).json({
 					_id: user.id,
 					name: user.username,
@@ -152,7 +153,7 @@ export async function logoutUser(req, res) {
 				message: "User not found! Try again.",
 			});
 		} else {
-			const token = req.cookies.token
+			const token = req.cookies.token;
 			const resp = await _createToken(token);
 			if (resp.err) {
 				return res
@@ -161,12 +162,12 @@ export async function logoutUser(req, res) {
 			} else {
 				res.clearCookie("token");
 				res.status(200).json({
-					message: "Successfully Logged out user"
-				})
+					message: "Successfully Logged out user",
+				});
 			}
 		}
 	} catch (err) {
-		console.log(err)
+		console.log(err);
 		return res.status(500).json({
 			message: "Unknown Error!",
 		});
@@ -178,16 +179,20 @@ export async function getMe(req, res) {
 		const { username } = req.body;
 		const user = await _checkUser(username);
 
+		console.log(username);
 		if (!user) {
 			return res.status(409).json({
 				message: "User not found! Try again.",
 			});
 		} else {
 			const token = generateToken(user._id);
-			res.cookie('token', token, { httpOnly: true });
+			res.cookie("token", token, { httpOnly: true });
 			return res.status(200).json({
 				_id: user.id,
 				name: user.username,
+				easy: user.easy,
+				medium: user.medium,
+				hard: user.hard,
 				token: token,
 			});
 		}
@@ -199,16 +204,16 @@ export async function getMe(req, res) {
 }
 
 export async function getProtectedMe(req, res) {
-	const {_id, name} = await userModel.findById(req.user.id)
+	const { _id, name } = await userModel.findById(req.user.id);
 
 	res.status(200).json({
 		id: _id,
 		name,
-		message: "Successfully verified cookie"
-	})
+		message: "Successfully verified cookie",
+	});
 }
 
-export async function updateUser(req, res) {
+export async function updatePassword(req, res) {
 	try {
 		const { username, password } = req.body;
 		const user = await _checkUser(username);
@@ -237,7 +242,7 @@ export async function updateUser(req, res) {
 			// Hash password
 			const salt = await bcrypt.genSalt(10);
 			const hashedPassword = await bcrypt.hash(password, salt);
-			const resp = await _updateUser(user.id, hashedPassword);
+			const resp = await _updatePassword(user.id, hashedPassword);
 			console.log(hashedPassword);
 			console.log(resp);
 			if (resp.err) {
@@ -263,5 +268,40 @@ export async function updateUser(req, res) {
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
 		expiresIn: "1d",
-	});	
+	});
 };
+
+// Update question history
+export async function updateHistory(req, res) {
+	try {
+		const { username, easy, medium, hard } = req.body;
+		const user = await _checkUser(username);
+
+		if (!user) {
+			return res.status(409).json({
+				message:
+					"User not found! Failed to update user question history.",
+			});
+		} else {
+			const resp = await _updateHistory(user.id, easy, medium, hard);
+			console.log(resp);
+			if (resp.err) {
+				return res.status(400).json({
+					message: "Could not update user question history!",
+				});
+			} else {
+				console.log(
+					`Updated user ${username}'s question history successfully!`
+				);
+				return res.status(200).json({
+					message: `Updated user ${username}'s question history successfully!`,
+				});
+			}
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
+	}
+}

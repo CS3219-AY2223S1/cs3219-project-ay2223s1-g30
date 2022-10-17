@@ -17,15 +17,17 @@ import {
 	Divider,
 	Container,
 	Paper,
+	styled,
 } from "@mui/material";
-import MuiDrawer from "@mui/material/Drawer"
-import MuiAppBar from "@mui/material/AppBar"
+import MuiDrawer from "@mui/material/Drawer";
+import MuiAppBar from "@mui/material/AppBar";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { 
-	URL_USER_SVC, 
-	URL_USER_SVC_DASHBOARD, 
-	URL_USER_SVC_LOGOUT } from "../configs";
+import {
+	URL_USER_SVC,
+	URL_USER_SVC_DASHBOARD,
+	URL_USER_SVC_LOGOUT,
+} from "../configs";
 import {
 	STATUS_CODE_OKAY,
 	STATUS_CODE_CONFLICT,
@@ -33,22 +35,23 @@ import {
 	STATUS_CODE_UNAUTHORIZED,
 } from "../constants";
 import { Link } from "react-router-dom";
-import * as React from 'react';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import RedditIcon from "@mui/icons-material/Reddit"
-import HomeIcon from "@mui/icons-material/Home"
-import PasswordIcon from "@mui/icons-material/Password"
-import LogoutIcon from "@mui/icons-material/Logout"
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove"
+import * as React from "react";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import RedditIcon from "@mui/icons-material/Reddit";
+import HomeIcon from "@mui/icons-material/Home";
+import PasswordIcon from "@mui/icons-material/Password";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 function Dashboard() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [dialogTitle, setDialogTitle] = useState("");
 	const [dialogMsg, setDialogMsg] = useState("");
-	const [isChangePasswordSuccess, setIsChangePasswordSuccess] = useState(false);
+	const [isChangePasswordSuccess, setIsChangePasswordSuccess] =
+		useState(false);
 	const [isChangePasswordFail, setIsChangePasswordFail] = useState(false);
 	const [isDeleteSuccess, setIsDeleteSuccess] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -102,15 +105,15 @@ function Dashboard() {
 			}
 		});
 		if (res && res.status === STATUS_CODE_OKAY) {
-			console.log("Successfully Logged in")
+			console.log("Successfully Logged in");
 			setIsCookieVerified(true);
 		}
-	}
+	};
 
 	// Currently using name to see who to log out
 	const handleLogout = async () => {
 		const endpoint = URL_USER_SVC_LOGOUT;
-		const res = await axios.post(endpoint, {username}).catch((err) => {
+		const res = await axios.post(endpoint, { username }).catch((err) => {
 			if (err.response.status === STATUS_CODE_CONFLICT) {
 				setErrorDialog("No such user found!");
 			} else {
@@ -118,10 +121,10 @@ function Dashboard() {
 			}
 		});
 		if (res && res.status === STATUS_CODE_OKAY) {
-			setUsername(undefined)
-			console.log("Successfully Logged out")
+			setUsername(undefined);
+			console.log("Successfully Logged out");
 		}
-	}
+	};
 
 	const changingPassword = () => {
 		setIsChangingPassword(true);
@@ -131,7 +134,7 @@ function Dashboard() {
 
 	useEffect(() => {
 		setUsername(sessionStorage.getItem("username"));
-		verifyCookie()
+		verifyCookie();
 		if (!(username === "undefined")) {
 			console.log("Fetched user", username);
 		}
@@ -157,55 +160,58 @@ function Dashboard() {
 
 	const handleRedditLink = () => {
 		window.open("https://www.reddit.com/r/peerprep/");
-	}
+	};
 
 	if (isCookieVerified) {
 		return (
 			<ThemeProvider theme={theme}>
-				<Box sx = {{ display: 'flex'}}>
+				<Box sx={{ display: "flex" }}>
 					<CssBaseline />
 
 					{/* Header */}
-					<MuiAppBar 
-						position = 'absolute' 
-						sx = {{
+					<MuiAppBar
+						position="absolute"
+						sx={{
 							zIndex: theme.zIndex.drawer + 1,
 						}}
 					>
 						<Toolbar
-							sx = {{
-								pr: '24px',
+							sx={{
+								pr: "24px",
 							}}
 						>
 							<Typography
-								component = 'h1'
-								variant = 'h6'
-								color = 'inherit'
+								component="h1"
+								variant="h6"
+								color="inherit"
 								noWrap
-								sx = {{ flexGrow: 1 }}
+								sx={{ flexGrow: 1 }}
 								align="left"
 							>
-								Welcome to your dashboard <code>{username}</code>
+								Welcome to your dashboard{" "}
+								<code>{username}</code>
 							</Typography>
 						</Toolbar>
 					</MuiAppBar>
 
 					{/* Dashboard Drawer */}
-					<MuiDrawer variant = "permanent">
+					<MuiDrawer variant="permanent">
 						<Toolbar
 							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'flex-end',
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "flex-end",
 								px: [15],
 							}}
-						>
-						</Toolbar>
+						></Toolbar>
 						<Divider />
 						{/* Dashboard Drawer List */}
-						<List component = "nav">
+						<List component="nav">
 							<React.Fragment>
-								<ListItemButton component={Link} to="/dashboard">
+								<ListItemButton
+									component={Link}
+									to="/dashboard"
+								>
 									<ListItemIcon>
 										<HomeIcon />
 									</ListItemIcon>
@@ -223,7 +229,11 @@ function Dashboard() {
 									</ListItemIcon>
 									<ListItemText primary="Change Password" />
 								</ListItemButton>
-								<ListItemButton onClick={handleLogout} component= {Link} to="/login">
+								<ListItemButton
+									onClick={handleLogout}
+									component={Link}
+									to="/login"
+								>
 									<ListItemIcon>
 										<LogoutIcon />
 									</ListItemIcon>
@@ -241,8 +251,8 @@ function Dashboard() {
 
 					{/* Logic for button handlers */}
 					<Dialog open={isChangingPassword} onClose={closeDialog}>
-	 					<DialogTitle>{dialogTitle}</DialogTitle>
-	 					<DialogContent>
+						<DialogTitle>{dialogTitle}</DialogTitle>
+						<DialogContent>
 							<DialogContentText>
 								{isChangePasswordFail ? (
 									dialogMsg
@@ -251,7 +261,9 @@ function Dashboard() {
 										label="New Password"
 										variant="standard"
 										value={password}
-										onChange={(e) => setPassword(e.target.value)}
+										onChange={(e) =>
+											setPassword(e.target.value)
+										}
 										sx={{ marginBottom: "1rem" }}
 										style={{ width: 250 }}
 										autoFocus
@@ -274,7 +286,10 @@ function Dashboard() {
 							</Button>
 						</DialogActions>
 					</Dialog>
-					<Dialog open={isChangePasswordSuccess} onClose={closeDialog}>
+					<Dialog
+						open={isChangePasswordSuccess}
+						onClose={closeDialog}
+					>
 						<DialogTitle>{dialogTitle}</DialogTitle>
 						<DialogContent>
 							<DialogContentText>{dialogMsg}</DialogContentText>
@@ -301,31 +316,35 @@ function Dashboard() {
 
 					{/* Main Dashboard */}
 					<Box
-						component = "main"
-						sx = {{
+						component="main"
+						sx={{
 							backgroundColor: (theme) =>
-								theme.palette.mode === 'light'
+								theme.palette.mode === "light"
 									? theme.palette.grey[100]
 									: theme.palette.grey[900],
 							flexGrow: 1,
-							height: '93vh',
-							overflow: 'auto',
-							width: '100vw',
+							height: "93vh",
+							overflow: "auto",
+							width: "100vw",
 							mb: -10,
-							mr: -8
+							mr: -8,
 						}}
 					>
 						<Toolbar />
-						<Container maxWidth="lg" sx = {{ mt:4, mb: 4}}>
-							<Grid container spacing = {3}>
-
+						<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+							<Grid container spacing={3}>
 								{/* Difficulty Selection */}
-								<Grid item xs = {12}  md = {8} lg = {9}>
-									<Paper  onClick={event => window.location.replace(`/selection`)}
-										sx = {{
-											p:2,
-											display: 'flex',
-											flexDirection: 'column',
+								<Grid item xs={12} md={8} lg={9}>
+									<Paper
+										onClick={(event) =>
+											window.location.replace(
+												`/selection`
+											)
+										}
+										sx={{
+											p: 2,
+											display: "flex",
+											flexDirection: "column",
 											height: 240,
 											':hover': {
 												boxShadow: 20,
@@ -337,22 +356,28 @@ function Dashboard() {
 								</Grid>
 
 								{/* Points & Questions Completed*/}
-								<Grid item xs = {12} md = {4} lg = {3}>
+								<Grid item xs={12} md={4} lg={3}>
 									<Paper
-										sx = {{
+										sx={{
 											p: 2,
-											display: 'flex',
-											flexDirection: 'columnn',
+											display: "flex",
+											flexDirection: "columnn",
 											height: 240,
 										}}
 									>
 										Points and Questions Completed
 									</Paper>
 								</Grid>
-								
+
 								{/* History */}
-								<Grid item xs = {12}>
-									<Paper xs = {{ p: 2, display: 'flex', flexDirection: 'column '}}>
+								<Grid item xs={12}>
+									<Paper
+										xs={{
+											p: 2,
+											display: "flex",
+											flexDirection: "column ",
+										}}
+									>
 										History
 									</Paper>
 								</Grid>
@@ -371,7 +396,8 @@ function Dashboard() {
 				<Button component={Link} to="/login">
 					Go to Log in Page
 				</Button>
-			</Box>);
+			</Box>
+		);
 	}
 }
 
