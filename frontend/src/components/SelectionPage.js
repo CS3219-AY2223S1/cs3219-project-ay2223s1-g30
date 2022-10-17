@@ -42,7 +42,15 @@ function SelectionPage() {
 					sx = {{
 						pr: '24px',
 					}}>
-						<IconButton sx={{ "&:hover": { color: "grey" } }} onClick={event => window.location.replace(`/dashboard`)}>
+						<IconButton 
+							sx={{ 
+								color:"white",
+							':hover': {
+								bgcolor: "white",
+								color: "black",
+								boxShadow: 20,
+							  },
+							  }} onClick={event => window.location.replace(`/dashboard`)}>
 							<ArrowBackIcon/>
 						</IconButton>
 						<Typography
@@ -179,7 +187,7 @@ const handleTimeout = (root, userName, difficulty) => {
 	console.log("socket emit: leave-match for: " + userName + " queuing for difficulty: " + difficulty);
 	socket.emit("leave-match", userName);
 	root.render("");
-	alert("Match not found, please try again!")
+	alert("Match not found, please try again!");
 }
 
 export default SelectionPage
