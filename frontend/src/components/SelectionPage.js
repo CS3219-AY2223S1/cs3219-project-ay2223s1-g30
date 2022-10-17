@@ -4,20 +4,18 @@ import {
 	Typography,
 	Toolbar,
 	Card,
-	Toolbar,
 	CardContent,
 	CardActionArea,
 	Grid,
 	IconButton,
 } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { socket } from "./services/socket";
 import { URL_USER_SVC, URL_USER_SVC_DASHBOARD } from "../configs";
 import axios from "axios";
 import { STATUS_CODE_OKAY, STATUS_CODE_CONFLICT } from "../constants";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { TimerDialog } from "./Dialog";
 import MuiAppBar from "@mui/material/AppBar";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -27,8 +25,8 @@ function SelectionPage() {
 	console.log("Attempting to connect");
 	// client-side
 	const [socketID, handleSocketID] = useState("");
-    const [difficulty, handleDifficulty] = useState("");
-    const username = sessionStorage.getItem("username");
+	const [difficulty, handleDifficulty] = useState("");
+	const username = sessionStorage.getItem("username");
 	useEffect(() => {
 		socket.emit("HELLO_THERE");
 		socket.on("connect", () => {
