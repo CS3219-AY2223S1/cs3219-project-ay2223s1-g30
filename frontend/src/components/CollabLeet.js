@@ -446,11 +446,7 @@ function CollabLeet() {
 					justifyContent: "center",
 					alignItems: "center",
 				}}
-			>
-				<Fab color="primary" style={floatingStyle}>
-					<ChatIcon />
-				</Fab>
-			</div>
+			></div>
 		</Box>
 	);
 }
