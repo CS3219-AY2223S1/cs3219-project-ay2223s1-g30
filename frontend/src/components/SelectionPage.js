@@ -123,6 +123,13 @@ function SelectionPage() {
 					variant="contained" 
 					size={"large"} 
 					startIcon={<Person/>}
+					sx={{ 
+						color:"white",
+					':hover': {
+						bgcolor: "white",
+						color: "black",
+						boxShadow: 20,}
+					}}
 					onClick={() => handleSolo(socket, difficulty)}>Solo</Button>
 				</Grid>
 				<Grid item>
@@ -130,6 +137,13 @@ function SelectionPage() {
 					variant="contained" 
 					size={"large"} 
 					startIcon={<GroupsIcon/>} 
+					sx={{ 
+						color:"white",
+					':hover': {
+						bgcolor: "white",
+						color: "black",
+						boxShadow: 20,}
+					}}
 					onClick={() => handleMatching(socket, difficulty)}>Collab</Button>
 				</Grid>
 		</Grid>
