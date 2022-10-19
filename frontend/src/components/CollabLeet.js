@@ -268,6 +268,7 @@ function CollabLeet() {
 			}
 		}
 		if (question === "") {
+			console.log(sessionStorage.getItem("user"));
 			if (sessionStorage.getItem("question") === null) {
 				init();
 			} else {

@@ -121,7 +121,7 @@ export default function TextEditor() {
 								sessionStorage.getItem("username")
 							);
 							console.log(sessionStorage.getItem("username"));
-							window.location.replace(`/selection`);
+							window.location.replace(`/dashboard`);
 						}}
 					>
 						Leave Room

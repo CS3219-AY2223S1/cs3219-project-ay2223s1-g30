@@ -7,7 +7,6 @@ import {
 import SignupPage from "./components/SignupPage";
 import LoginPage from "./components/LoginPage";
 import DashboardPage from "./components/DashboardPage";
-import SelectionPage from "./components/SelectionPage";
 import { Box } from "@mui/material";
 import CollabLeet from "./components/CollabLeet";
 
@@ -25,7 +24,6 @@ function App() {
 						<Route path="/signup" element={<SignupPage />} />
 						<Route path="/login" element={<LoginPage />} />
 						<Route path="/dashboard" element={<DashboardPage />} />
-						<Route path="/selection" element={<SelectionPage />} />
 						<Route
 							path="/collab"
 							exact
