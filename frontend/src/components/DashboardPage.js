@@ -464,7 +464,7 @@ function Dashboard() {
 		async function init() {
 			console.log("No question");
 			try {
-				if (sessionStorage.getItem("difficulty") !== "null") {
+				if (sessionStorage.getItem("difficulty") !== null) {
 					setDifficulty(sessionStorage.getItem("difficulty"));
 					if (user === "") {
 						await getUser();
