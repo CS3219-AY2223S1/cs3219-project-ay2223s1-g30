@@ -8,13 +8,13 @@ app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
 app.options("*", cors());
 
-import { findQuestion } from "./controller/question-controller.js";
+import { getQuestion } from "./controller/question-controller.js";
 
 const router = express.Router();
 
 // Controller will contain all the User-defined Routes
 router.get("/", (_, res) => res.send("Hello World from question-service"));
-router.get("/question", findQuestion);
+router.get("/question", getQuestion);
 
 app.use("/api", router).all((_, res) => {
 	res.setHeader("content-type", "application/json");
