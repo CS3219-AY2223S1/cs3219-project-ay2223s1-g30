@@ -138,6 +138,18 @@ io.on("connection", (socket) => {
 		});
 	});
 
+    //For chat messaging
+    socket.on('new-user', (name, collabRoomId) => {
+        console.log(`New chat user: ${name} in ${collabRoomId}`);
+        socket.join(collabRoomId);
+        socket.broadcast.to(collabRoomId).emit('user-connected', name);
+    })
+
+    socket.on("send-chat-message", (message, userName, collabRoomId) => {
+        console.log(`${userName} in ${collabRoomId} sends: ${message}`);
+        socket.broadcast.to(collabRoomId).emit("chat-message", { message: message, name: userName });
+    })
+
 	//For testing with Postman
 	socket.on("message", function (data) {
 		console.log(data);
