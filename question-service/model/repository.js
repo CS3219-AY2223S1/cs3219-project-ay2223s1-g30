@@ -18,3 +18,7 @@ export async function findQuestion() {
 	const questions = await QuestionModel.find();
 	return questions;
 }
+
+export async function mapQuestion(params) {
+	return QuestionModel.findOne(params)
+}

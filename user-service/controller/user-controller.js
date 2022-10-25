@@ -305,3 +305,34 @@ export async function updateHistory(req, res) {
 		});
 	}
 }
+
+
+// Get User History
+export async function getHistory(req, res) {
+	try {
+		const { username } = req.body;
+		const user = await _checkUser(username);
+
+		if (!user) {
+			return res.status(409).json({
+				message:
+					"User not found! Failed to update user question history.",
+			});
+		} else {
+			const easyQuestions = user.easy;
+			const mediumQuestions = user.medium;
+			const hardQuestions = user.hard;
+
+			return res.status(200).json({
+				easyQuestions: easyQuestions,
+				mediumQuestions: mediumQuestions,
+				hardQuestions: hardQuestions,
+			})
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			message: "Unknown Error!",
+		});
+	}
+}

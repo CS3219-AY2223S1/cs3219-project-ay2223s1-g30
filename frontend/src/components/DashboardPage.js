@@ -18,15 +18,31 @@ import {
 	Container,
 	Paper,
 	styled,
+	Table,
+	TableBody,
+	TableHead,
+	TableRow,
+	TableCell,
+	TableContainer,
+	TableFooter,
+	TablePagination,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
+import {
+	Chart,
+	PieSeries,
+	Title,
+	Legend,
+} from "@devexpress/dx-react-chart-material-ui";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
 	URL_USER_SVC,
 	URL_USER_SVC_DASHBOARD,
 	URL_USER_SVC_LOGOUT,
+	URL_HISTORY_SVC,
+	URL_QUESTION_SVC,
 } from "../configs";
 import {
 	STATUS_CODE_OKAY,
@@ -44,6 +60,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import PasswordIcon from "@mui/icons-material/Password";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import SelectInput from "@mui/material/Select/SelectInput";
 
 function Dashboard() {
 	const [username, setUsername] = useState("");
@@ -56,6 +73,58 @@ function Dashboard() {
 	const [isDeleteSuccess, setIsDeleteSuccess] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const [isCookieVerified, setIsCookieVerified] = useState(false);
+	const [easyQuestions, setEasyQuestion] = useState([]);
+	const [mediumQuestions, setMediumQuestion] = useState([]);
+	const [hardQuestions, setHardQuestion] = useState([]);
+	const [questionsDone, setQuestionsDone] = useState([]);
+	const [history, setHistory] = useState([]);
+	const [historyTableContent, setHistoryTableContent] = useState([]);
+	const [isHistorySet, setHistorySet] = useState(false);
+
+	const getHistory = async () => {
+		const username = sessionStorage.getItem("username");
+		const endpoint = URL_HISTORY_SVC + "/me";
+		const res = await axios
+			.post(endpoint, { username })
+			.catch((err) => {
+				setErrorDialog("Please try again later");
+			});
+
+		console.log(res.data)
+
+		const resEasyQuestions = res.data.easyQuestions;
+		const resMediumQuestions = res.data.mediumQuestions;
+		const resHardQuestions = res.data.hardQuestions;
+		
+		if (res && res.status === STATUS_CODE_OKAY) {
+			setHistory(res.data);
+			setHistorySet(true);
+			setEasyQuestion(resEasyQuestions);
+			setMediumQuestion(resMediumQuestions);
+			setHardQuestion(resHardQuestions);
+			setQuestionsDone([
+				{ argument: 'Easy', value: resEasyQuestions.length },
+				{ argument: 'Medium', value: resMediumQuestions.length },
+				{ argument: 'Hard', value: resHardQuestions.length },
+			])
+		}
+	}
+
+	const updateDashboardHistory = async () => {
+		const dashboardHistory = history;
+		const endpoint = URL_QUESTION_SVC;
+		console.log(dashboardHistory)
+		const res = await axios
+			.post(endpoint, {dashboardHistory})
+			.catch((err) => {
+				setErrorDialog("Please try again later");
+			});
+		
+		if (res && res.status === STATUS_CODE_OKAY) {
+			setHistoryTableContent(res.data);
+			console.log(historyTableContent)
+		}
+	}
 
 	const handleChangePassword = async () => {
 		const endpoint = URL_USER_SVC + "/" + username;
@@ -109,7 +178,6 @@ function Dashboard() {
 			setIsCookieVerified(true);
 		}
 	};
-
 	// Currently using name to see who to log out
 	const handleLogout = async () => {
 		const endpoint = URL_USER_SVC_LOGOUT;
@@ -135,10 +203,13 @@ function Dashboard() {
 	useEffect(() => {
 		setUsername(sessionStorage.getItem("username"));
 		verifyCookie();
+		getHistory();
+		updateDashboardHistory();
+	
 		if (!(username === "undefined")) {
 			console.log("Fetched user", username);
 		}
-	}, [username]);
+	}, [username, isHistorySet]);
 
 	const closeDialog = () => {
 		setIsDeleteSuccess(false);
@@ -210,7 +281,7 @@ function Dashboard() {
 						></Toolbar>
 						<Divider />
 						{/* Dashboard Drawer List */}
-						<List component="nav">
+						<List component="nav" sx={{height: 1000}}>
 							<React.Fragment>
 								<ListItemButton
 									component={Link}
@@ -244,7 +315,8 @@ function Dashboard() {
 									<ListItemText primary="Logout" />
 								</ListItemButton>
 								<ListItemButton 
-									onClick={handleDelete} 
+									onClick={handleDelete}
+									sx = {{marginTop: 76}}
 								>
 									<ListItemIcon>
 										<PersonRemoveIcon />
@@ -355,7 +427,7 @@ function Dashboard() {
 											p: 2,
 											display: "flex",
 											flexDirection: "column",
-											height: 240,
+											height: 430,
 											':hover': {
 												boxShadow: 20,
 											  },
@@ -365,31 +437,51 @@ function Dashboard() {
 									</Paper>
 								</Grid>
 
-								{/* Points & Questions Completed*/}
+
+								{/*Questions Completed*/}
 								<Grid item xs={12} md={4} lg={3}>
 									<Paper
 										sx={{
 											p: 2,
 											display: "flex",
 											flexDirection: "columnn",
-											height: 240,
+											height: 430,
 										}}
 									>
-										Points and Questions Completed
+										<Chart data={questionsDone}>
+											<Title text="Questions Completed"/>
+											<Legend orientation="horizontal" position="left" margin={10}/>
+											<PieSeries valueField="value" argumentField="argument" outerRadius={2}/>
+										</Chart>
 									</Paper>
 								</Grid>
 
 								{/* History */}
 								<Grid item xs={12}>
-									<Paper
-										xs={{
-											p: 2,
-											display: "flex",
-											flexDirection: "column ",
-										}}
-									>
-										History
-									</Paper>
+									<TableContainer>
+										<Table aria-label = "History">
+											<TableHead>
+												<TableRow>
+													<TableCell align="left">Problem ID</TableCell>
+													<TableCell align="left">Problem Name</TableCell>
+													<TableCell align="left">Difficulty</TableCell>
+												</TableRow>
+											</TableHead>
+											<TableBody>
+												{
+													historyTableContent.map(row => (
+														<TableRow
+															key = {row.id}
+														>
+															<TableCell align="left">{row.ProblemID}</TableCell>
+															<TableCell align="left">{row.ProblemName}</TableCell>
+															<TableCell align="left">{row.Difficulty}</TableCell>
+														</TableRow>
+													))
+												}
+											</TableBody>
+										</Table>
+									</TableContainer>
 								</Grid>
 							</Grid>
 						</Container>
