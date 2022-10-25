@@ -162,6 +162,10 @@ function Dashboard() {
 		window.open("https://www.reddit.com/r/peerprep/");
 	};
 
+	const warningText = {
+		color: "red"
+	};
+
 	if (isCookieVerified) {
 		return (
 			<ThemeProvider theme={theme}>
@@ -201,7 +205,7 @@ function Dashboard() {
 								display: "flex",
 								alignItems: "center",
 								justifyContent: "flex-end",
-								px: [15],
+								px: [1],
 							}}
 						></Toolbar>
 						<Divider />
@@ -239,11 +243,16 @@ function Dashboard() {
 									</ListItemIcon>
 									<ListItemText primary="Logout" />
 								</ListItemButton>
-								<ListItemButton onClick={handleDelete}>
+								<ListItemButton 
+									onClick={handleDelete} 
+								>
 									<ListItemIcon>
 										<PersonRemoveIcon />
 									</ListItemIcon>
-									<ListItemText primary="Delete Account" />
+									<ListItemText 
+										primary="Delete Account" 
+										primaryTypographyProps={{ style: warningText}}
+									/>
 								</ListItemButton>
 							</React.Fragment>
 						</List>
@@ -316,7 +325,7 @@ function Dashboard() {
 
 					{/* Main Dashboard */}
 					<Box
-						component="main"
+						component="permanent"
 						sx={{
 							backgroundColor: (theme) =>
 								theme.palette.mode === "light"
@@ -326,12 +335,13 @@ function Dashboard() {
 							height: "93vh",
 							overflow: "auto",
 							width: "100vw",
-							mb: -10,
+							marginLeft: "9.9rem",
+							marginBottom: -10,
 							mr: -8,
 						}}
 					>
 						<Toolbar />
-						<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+						<Container maxWidth="80vw" sx={{ mt: 2, mb: 2}}>
 							<Grid container spacing={3}>
 								{/* Difficulty Selection */}
 								<Grid item xs={12} md={8} lg={9}>
