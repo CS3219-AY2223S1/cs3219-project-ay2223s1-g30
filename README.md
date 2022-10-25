@@ -22,7 +22,7 @@ This is a template repository for CS3219 project.
 4. Enter `ENV=DEV` in `.env` file.
 5. Enter `PORT=http://localhost:3000` in `.env` file.
 6. Install npm packages using `npm i`.
-7. Run Question Service using `npm run dev`.
+7. Run Matching Service using `npm run dev`.
 
 ## Question Service
 
@@ -39,3 +39,7 @@ This is a template repository for CS3219 project.
 
 1. Install npm packages using `npm i`.
 2. Run Frontend using `npm start`.
+
+## Run entire Application
+1. Install all the packages.
+2. Run `npm run fullstart`
