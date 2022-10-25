@@ -90,8 +90,6 @@ function Dashboard() {
 				setErrorDialog("Please try again later");
 			});
 
-		console.log(res.data)
-
 		const resEasyQuestions = res.data.easyQuestions;
 		const resMediumQuestions = res.data.mediumQuestions;
 		const resHardQuestions = res.data.hardQuestions;
@@ -113,7 +111,6 @@ function Dashboard() {
 	const updateDashboardHistory = async () => {
 		const dashboardHistory = history;
 		const endpoint = URL_QUESTION_SVC;
-		console.log(dashboardHistory)
 		const res = await axios
 			.post(endpoint, {dashboardHistory})
 			.catch((err) => {
@@ -122,7 +119,6 @@ function Dashboard() {
 		
 		if (res && res.status === STATUS_CODE_OKAY) {
 			setHistoryTableContent(res.data);
-			console.log(historyTableContent)
 		}
 	}
 

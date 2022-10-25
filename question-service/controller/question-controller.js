@@ -16,7 +16,6 @@ export async function findQuestion(req, res) {
 
 export async function mapQuestionsDone(req, res) {
 	try {
-		console.log(req.body)
 		const easyQuestions = req.body.dashboardHistory.easyQuestions;
 		const mediumQuestions = req.body.dashboardHistory.mediumQuestions;
 		const hardQuestions = req.body.dashboardHistory.hardQuestions;

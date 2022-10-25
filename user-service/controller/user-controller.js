@@ -306,7 +306,6 @@ export async function updateHistory(req, res) {
 	}
 }
 
-
 // Get User History
 export async function getHistory(req, res) {
 	try {
