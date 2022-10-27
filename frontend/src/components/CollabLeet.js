@@ -96,8 +96,8 @@ function CollabLeet() {
 
 	const findQuestion = async () => {
 		if (user !== "" && partner !== "" && questions !== "") {
+			console.log("Finding question");
 			for (let i = 0; i < questions.length; i++) {
-				console.log("Finding question");
 				if (questions[i].difficulty === difficulty) {
 					if (room === null) {
 						if (difficulty === "easy") {
@@ -218,6 +218,35 @@ function CollabLeet() {
 								);
 								break;
 							}
+						}
+					}
+				}
+			}
+			if (sessionStorage.getItem(question) === null) {
+				let randNum = Math.floor(Math.random() * questions.length);
+				if (room === null) {
+					while (true) {
+						if (questions[randNum].difficulty === difficulty) {
+							break;
+						} else {
+							randNum = Math.floor(
+								Math.random() * questions.length
+							);
+						}
+					}
+					setQuestion(questions[randNum]);
+					sessionStorage.setItem(
+						"question",
+						JSON.stringify(questions[randNum])
+					);
+				} else {
+					for (let i = 0; i < questions.length; i++) {
+						if (questions[i].difficulty === difficulty) {
+							setQuestion(questions[i]);
+							sessionStorage.setItem(
+								"question",
+								JSON.stringify(questions[i])
+							);
 						}
 					}
 				}
@@ -378,12 +407,12 @@ function CollabLeet() {
 							component="div"
 							sx={{ pt: 2 }}
 						>
-							{question ? question.title + " " : null}(
+							{question ? question.title + " (" : null}
 							{question
 								? question.difficulty.charAt(0).toUpperCase() +
-								  question.difficulty.slice(1)
+								  question.difficulty.slice(1) +
+								  ")"
 								: null}
-							)
 						</Typography>
 						<Paper
 							variant="outlined"
