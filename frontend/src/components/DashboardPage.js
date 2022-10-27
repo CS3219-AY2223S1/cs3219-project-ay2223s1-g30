@@ -83,12 +83,15 @@ function Dashboard() {
 
 	const getHistory = async () => {
 		const username = sessionStorage.getItem("username");
-		const endpoint = URL_HISTORY_SVC + "/me";
+		const endpoint = URL_HISTORY_SVC + "/" + username;
+		console.log(endpoint)
 		const res = await axios
-			.post(endpoint, { username })
+			.get(endpoint)
 			.catch((err) => {
 				setErrorDialog("Please try again later");
 			});
+
+		console.log(res)
 
 		const resEasyQuestions = res.data.easyQuestions;
 		const resMediumQuestions = res.data.mediumQuestions;

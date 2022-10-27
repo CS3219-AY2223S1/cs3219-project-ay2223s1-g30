@@ -309,7 +309,7 @@ export async function updateHistory(req, res) {
 // Get User History
 export async function getHistory(req, res) {
 	try {
-		const { username } = req.body;
+		const username = req.params.username
 		const user = await _checkUser(username);
 
 		if (!user) {
