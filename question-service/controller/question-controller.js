@@ -1,4 +1,3 @@
-import { ormFindQuestion as _findQuestion } from "../model/question-orm.js";
 import { ormMapQuestion as _mapQuestion } from "../model/question-orm.js";
 import { ormGetQuestion as _getQuestion } from "../model/question-orm.js";
 

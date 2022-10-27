@@ -1,5 +1,4 @@
-import { findQuestion, mapQuestion } from "./repository.js";
-import { getQuestion } from "./repository.js";
+import { getQuestion, mapQuestion } from "./repository.js";
 
 //need to separate orm functions from repository to decouple business logic from persistence
 

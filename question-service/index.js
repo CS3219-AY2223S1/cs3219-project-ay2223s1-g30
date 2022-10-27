@@ -9,14 +9,13 @@ app.use(cors({ credentials: true, origin: endpoint })); // config cors so that f
 app.options("*", cors());
 
 
-import { findQuestion, mapQuestionsDone} from "./controller/question-controller.js";
-import { getQuestion } from "./controller/question-controller.js";
+import { getQuestion, mapQuestionsDone} from "./controller/question-controller.js";
 
 const router = express.Router();
 
 // Controller will contain all the User-defined Routes
 router.get("/", (_, res) => res.send("Hello World from question-service"));
-router.get("/question", findQuestion);
+router.get("/question", getQuestion);
 router.post("/question", mapQuestionsDone);
 router.get("/question", getQuestion);
 
