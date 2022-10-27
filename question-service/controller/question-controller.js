@@ -1,15 +1,16 @@
 import { ormFindQuestion as _findQuestion } from "../model/question-orm.js";
 import { ormMapQuestion as _mapQuestion } from "../model/question-orm.js";
+import { ormGetQuestion as _getQuestion } from "../model/question-orm.js";
 
-export async function findQuestion(req, res) {
+export async function getQuestion(req, res) {
 	try {
-		const questions = await _findQuestion();
+		const questions = await _getQuestion();
 		return res.status(200).json(questions);
 	} catch (err) {
 		console.log(err);
 		return res.status(500).json({
 			message:
-				"Controller ERROR: Database failure when finding question!",
+				"Controller ERROR: Database failure when geting question!",
 		});
 	}
 }
