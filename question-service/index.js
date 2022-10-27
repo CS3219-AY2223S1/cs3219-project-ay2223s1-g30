@@ -8,7 +8,9 @@ app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
 app.options("*", cors());
 
+
 import { findQuestion, mapQuestionsDone} from "./controller/question-controller.js";
+import { getQuestion } from "./controller/question-controller.js";
 
 const router = express.Router();
 
@@ -16,6 +18,7 @@ const router = express.Router();
 router.get("/", (_, res) => res.send("Hello World from question-service"));
 router.get("/question", findQuestion);
 router.post("/question", mapQuestionsDone);
+router.get("/question", getQuestion);
 
 app.use("/api", router).all((_, res) => {
 	res.setHeader("content-type", "application/json");

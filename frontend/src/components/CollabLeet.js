@@ -24,6 +24,8 @@ import TextEditor from "./Collab/TextEditor.js";
 import MuiAppBar from "@mui/material/AppBar";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChatIcon from "@mui/icons-material/Chat";
+//import { socket } from "./services/socket";
+import { io } from "socket.io-client";
 
 function CollabLeet() {
 	const floatingStyle = {
@@ -94,8 +96,8 @@ function CollabLeet() {
 
 	const findQuestion = async () => {
 		if (user !== "" && partner !== "" && questions !== "") {
+			console.log("Finding question");
 			for (let i = 0; i < questions.length; i++) {
-				console.log("Finding question");
 				if (questions[i].difficulty === difficulty) {
 					if (room === null) {
 						if (difficulty === "easy") {
@@ -220,6 +222,35 @@ function CollabLeet() {
 					}
 				}
 			}
+			if (sessionStorage.getItem(question) === null) {
+				let randNum = Math.floor(Math.random() * questions.length);
+				if (room === null) {
+					while (true) {
+						if (questions[randNum].difficulty === difficulty) {
+							break;
+						} else {
+							randNum = Math.floor(
+								Math.random() * questions.length
+							);
+						}
+					}
+					setQuestion(questions[randNum]);
+					sessionStorage.setItem(
+						"question",
+						JSON.stringify(questions[randNum])
+					);
+				} else {
+					for (let i = 0; i < questions.length; i++) {
+						if (questions[i].difficulty === difficulty) {
+							setQuestion(questions[i]);
+							sessionStorage.setItem(
+								"question",
+								JSON.stringify(questions[i])
+							);
+						}
+					}
+				}
+			}
 			console.log("Got the question");
 		}
 	};
@@ -279,7 +310,56 @@ function CollabLeet() {
 				console.log("Question:", question);
 			}
 		}
-	});
+    });
+
+    // Socket.io used for chat messaging
+    const messageContainer = document.getElementById('message-container');
+    const messageForm = document.getElementById('send-container');
+    const messageInput = document.getElementById('message-input');
+    const userName = sessionStorage.getItem("username");
+    const collabRoomId = sessionStorage.getItem("collabRoomId");
+
+    const [socket, setSocket] = useState();
+    useEffect(() => {
+        const s = io("http://localhost:8001");
+        setSocket(s);
+        s.emit('new-user', userName, collabRoomId);
+
+        return () => {
+            s.disconnect();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (socket == null) return;
+        socket.on('user-connected', name => {
+            appendMessage(`${name} connected`);
+        });
+    }, [socket]);
+
+    useEffect(() => {
+        if (socket == null) return;
+        socket.on('chat-message', data => {
+            appendMessage(`${data.name}: ${data.message}`);
+        });
+    }, [socket]);
+
+    useEffect(() => {
+        if (socket == null) return;
+        messageForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const message = messageInput.value;
+            appendMessage(`You: ${message}`);
+            socket.emit('send-chat-message', message, userName, collabRoomId);
+            messageInput.value = '';
+        })
+    }, [socket]);
+
+    function appendMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.innerText = message;
+        messageContainer.append(messageElement);
+    }
 
 	return (
 		<Box>
@@ -327,12 +407,12 @@ function CollabLeet() {
 							component="div"
 							sx={{ pt: 2 }}
 						>
-							{question ? question.title + " " : null}(
+							{question ? question.title + " (" : null}
 							{question
 								? question.difficulty.charAt(0).toUpperCase() +
-								  question.difficulty.slice(1)
+								  question.difficulty.slice(1) +
+								  ")"
 								: null}
-							)
 						</Typography>
 						<Paper
 							variant="outlined"
@@ -439,7 +519,46 @@ function CollabLeet() {
 			</Box>
 			<Box sx={{ pt: 2 }}>
 				<TextEditor />
-			</Box>
+            </Box>
+            {/*Chat Messaging*/}
+            <Box sx={{ pt: 2 }}>
+                <div style={{
+                    padding: "0",
+                    margin: "0",
+                    //display: "flex",
+                    //justifycontent:"center",
+                }}>
+                <div>Chat Messaging</div>
+                <Card
+                    variant="outlined"
+                    style={{
+                        height: 300,
+                        wordWrap: "break-word",
+                        maxWidth: "100%",
+                        overflow: "scroll",
+                        overflowX: "hidden",
+                    }}
+                >
+                <div id="message-container"
+                    style={{
+                        width: "80%",
+                        maxWidth: "1200px",
+                    }}></div>
+                </Card>
+                <form id="send-container"
+                    style={{
+                        width: "80%",
+                        maxWidth: "1200px",
+                    }}
+                >
+                    <input type="text" id="message-input"
+                        style={{
+                            flexgrow: "1",
+                        }}/>
+                    <button type="submit" id="send-button">Send</button>
+                </form>
+                </div>
+            </Box>
 			<div
 				style={{
 					display: "flex",

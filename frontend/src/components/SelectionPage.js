@@ -28,13 +28,13 @@ function SelectionPage() {
 	const [difficulty, handleDifficulty] = useState("");
 	const username = sessionStorage.getItem("username");
 	useEffect(() => {
-		socket.emit("HELLO_THERE");
+		//socket.emit("HELLO_THERE");
 		socket.on("connect", () => {
 			console.log(
 				"Front-end connection to localhost:8001 socket successful."
 			);
 			console.log(" connected on socket id: " + socket.id);
-			handleSocketID(socket.id);
+            handleSocketID(socket.id);
 		});
 		if (sessionStorage.getItem("question") !== "") {
 			async function update() {

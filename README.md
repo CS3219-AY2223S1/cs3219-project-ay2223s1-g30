@@ -31,9 +31,10 @@ This is a template repository for CS3219 project.
 3. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
 4. Enter `ENV=DEV` in `.env` file.
 5. Enter `PORT=http://localhost:3000` in `.env` file.
-6. Upload the `questions.json` file into your database under the collection name `questions`.
-7. Install npm packages using `npm i`.
-8. Run Question Service using `npm run dev`.
+6. In the database, create a collection name `questions`.
+7. Upload the `questions.json` file into the collection named `questions`.
+8. Install npm packages using `npm i`.
+9. Run Question Service using `npm run dev`.
 
 ## Frontend
 
