@@ -413,48 +413,7 @@ function Dashboard() {
 							<Grid container spacing={3}>
 								{/* Difficulty Selection */}
 								<Grid item xs={12} md={8} lg={9}>
-									<Paper
-										onClick={(event) =>
-											window.location.replace(
-												`/selection`
-											)
-										}
-										sx={{
-											p: 2,
-											display: "flex",
-											flexDirection: "column",
-											height: 430,
-											':hover': {
-												boxShadow: 20,
-											  },
-										}}
-									>
-										Start PeerPrep now !
-									</Paper>
-								</Grid>
-
-
-								{/*Questions Completed*/}
-								<Grid item xs={12} md={4} lg={3}>
-									<Paper
-										sx={{
-											p: 2,
-											display: "flex",
-											flexDirection: "columnn",
-											height: 430,
-										}}
-									>
-										<Chart data={questionsDone}>
-											<Title text="Questions Completed"/>
-											<Legend orientation="horizontal" position="left" margin={10}/>
-											<PieSeries valueField="value" argumentField="argument" outerRadius={2}/>
-										</Chart>
-									</Paper>
-								</Grid>
-
-								{/* History */}
-								<Grid item xs={12}>
-									<TableContainer>
+									<TableContainer sx ={{height: 430}}>
 										<Table aria-label = "History">
 											<TableHead>
 												<TableRow>
@@ -478,6 +437,52 @@ function Dashboard() {
 											</TableBody>
 										</Table>
 									</TableContainer>
+								</Grid>
+
+
+								{/*Questions Completed*/}
+								<Grid item xs={12} md={4} lg={3}>
+									<Paper
+										sx={{
+											p: 2,
+											display: "flex",
+											flexDirection: "columnn",
+											height: 430,
+										}}
+									>
+										<Chart data={questionsDone}>
+											<Title text="Questions Completed"/>
+											<Legend orientation="horizontal" position="left" margin={10}/>
+											<PieSeries valueField="value" argumentField="argument" outerRadius={2}/>
+										</Chart>
+									</Paper>
+								</Grid>
+
+								{/* History */}
+								<Grid item xs={12}>
+									<Box
+										display={"flex"}
+										flexDirection={"column"}
+										justifyContent={"flex-end"}
+										sx={{
+											alignItems: 'center',
+										}}
+									>
+										<Button 
+											variant={"contained"} 
+											sx={{
+												width: '35vw', 
+												height: '5vh', 
+												marginTop: "2rem",
+											}} 
+											onClick={(event) =>
+												window.location.replace(
+													`/selection`
+												)
+											}>
+											Start PeerPrep Now!
+										</Button>
+									</Box>
 								</Grid>
 							</Grid>
 						</Container>
