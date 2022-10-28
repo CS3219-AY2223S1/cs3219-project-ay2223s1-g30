@@ -100,13 +100,18 @@ export default function TextEditor() {
 	}, []);
 	return (
 		<div>
-			<div className="container" ref={wrapperRef}></div>
+			<div className="container" 
+					style={{
+						height: "69.35vh",
+					}}
+					ref={wrapperRef}></div>
 			<div
+			
 				style={{
 					display: "flex",
 					justifyContent: "center",
 					alignItems: "center",
-					marginTop: "20px",
+					marginTop: "100px",
 					marginBottom: "20px",
 				}}
 			>
