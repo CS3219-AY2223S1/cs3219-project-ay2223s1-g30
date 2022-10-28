@@ -346,7 +346,7 @@ const getUser = async () => {
 			}
 		});
 		if (res && res.status === STATUS_CODE_OKAY) {
-			console.log("You successfully retrieved user1");
+			console.log("You successfully retrieved user!");
 			return res.data;
 		}
 	}

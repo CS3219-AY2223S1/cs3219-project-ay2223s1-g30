@@ -99,6 +99,7 @@ function SignupPage() {
 							display: 'flex',
 							flexDirection: 'column',
 							alignItems: 'center',
+							marginRight: '5rem'
 						}}
 					>
 						<Avatar sx={{ m: 1, bgcolour: 'secondary.main' }}>
