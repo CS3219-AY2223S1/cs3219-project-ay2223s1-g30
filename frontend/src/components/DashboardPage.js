@@ -310,10 +310,8 @@ function Dashboard() {
 									</ListItemIcon>
 									<ListItemText primary="Logout" />
 								</ListItemButton>
-								<ListItemButton 
-									onClick={handleDelete}
-									sx = {{marginTop: 76}}
-								>
+								<Divider />
+								<ListItemButton onClick={handleDelete}>
 									<ListItemIcon>
 										<PersonRemoveIcon />
 									</ListItemIcon>
