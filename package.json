@@ -7,7 +7,10 @@
     "fullstart": "concurrently \"npm run user_start\" \"npm run matching_start\" \"npm run question_start\" \"npm run frontend_start\""
   },
   "dependencies": {
+    "@devexpress/dx-react-chart-material-ui": "^3.0.6",
+    "concurrently": "^7.5.0",
     "cookie-parser": "^1.4.6",
+    "nodemon": "^2.0.20",
     "react-icons": "^4.4.0"
   }
 }
