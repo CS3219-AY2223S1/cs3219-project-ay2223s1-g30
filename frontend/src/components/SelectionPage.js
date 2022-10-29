@@ -258,10 +258,27 @@ const handleMatching = (socket, difficulty) => {
 	});
 };
 
-const handleSolo = (difficulty) => {
-	sessionStorage.setItem("difficulty", difficulty);
-	console.log("Selected Solo with Difficulty: " + difficulty);
-	alert("You have clicked solo!");
+const handleSolo = (socket, difficulty) => {
+    sessionStorage.setItem("difficulty", difficulty);
+    if (difficulty === "") {
+        difficulty = "easy";
+    }
+    console.log("Selected Solo with Difficulty: " + difficulty);
+    sessionStorage.setItem("isSoloMode", "true");
+
+    const username = sessionStorage.getItem("username");
+    const userID = socket.id;
+    socket.emit("solo-practice", username, difficulty, userID);
+    //alert("You have clicked solo!");
+    socket.on("solo-practice-success", (collabRoomId) => {
+        console.log("Now transferring to a solo practice room.");
+
+        console.log(collabRoomId);
+
+        // TRANSPORT USER TO ROOM
+        sessionStorage.setItem("collabRoomId", collabRoomId);
+        window.location.replace(`/collab`);
+    });
 };
 
 // Creation of timer

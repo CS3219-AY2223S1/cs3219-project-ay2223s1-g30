@@ -94,7 +94,7 @@ function CollabLeet() {
 		console.log("You successfully retrieved questions");
 	};
 
-	const findQuestion = async () => {
+    const findQuestion = async () => {      
 		if (user !== "" && partner !== "" && questions !== "") {
 			console.log("Finding question");
 			for (let i = 0; i < questions.length; i++) {
@@ -253,7 +253,26 @@ function CollabLeet() {
 			}
 			console.log("Got the question");
 		}
-	};
+    };
+
+    const findQuestionSolo = async () => {
+        let randNum = Math.floor(Math.random() * questions.length);
+        while (true) {
+            if (questions[randNum].difficulty === difficulty) {
+                break;
+            } else {
+                randNum = Math.floor(
+                    Math.random() * questions.length
+                );
+            }
+        }
+        setQuestion(questions[randNum]);
+        sessionStorage.setItem(
+            "question",
+            JSON.stringify(questions[randNum])
+        );
+        console.log("Got the question");
+    };
 
 	const findRoom = async () => {
 		if (username !== "") {
@@ -278,22 +297,32 @@ function CollabLeet() {
 			console.log("No question");
 			try {
 				setUsername(sessionStorage.getItem("username"));
-				setDifficulty(sessionStorage.getItem("difficulty"));
-				if (user === "") {
-					await getUser();
-				}
-				if (room === "") {
-					await findRoom();
-				}
-				if (partner === "") {
-					await getPartner();
-				}
-				if (questions === "") {
-					await getQuestions();
-				}
-				if (question === "") {
-					findQuestion();
-				}
+                setDifficulty(sessionStorage.getItem("difficulty"));
+                if (sessionStorage.getItem("isSoloMode") == "true") {
+                    console.log("Question service: Solo mode");
+                    if (questions === "") {
+                        await getQuestions();
+                    }
+                    if (question === "") {
+                        findQuestionSolo();
+                    }
+                } else {
+                    if (user === "") {
+                        await getUser();
+                    }
+                    if (room === "") {
+                        await findRoom();
+                    }
+                    if (partner === "") {
+                        await getPartner();
+                    }
+                    if (questions === "") {
+                        await getQuestions();
+                    }
+                    if (question === "") {
+                        findQuestion();
+                    }
+                }
 			} catch (err) {
 				console.log(err);
 			}
@@ -307,7 +336,6 @@ function CollabLeet() {
 					JSON.parse(sessionStorage.getItem("question"))
 				);
 				setQuestion(JSON.parse(sessionStorage.getItem("question")));
-				console.log("Question:", question);
 			}
 		}
     });
@@ -361,6 +389,13 @@ function CollabLeet() {
         messageContainer.append(messageElement);
     }
 
+    // Used to hide messaging service in solo mode.
+    var chatMessagingDisplay = 'block';
+    const isSoloMode = sessionStorage.getItem("isSoloMode");
+    if (isSoloMode != null & isSoloMode == "true") {
+        chatMessagingDisplay = 'none';
+    }    
+
 	return (
 		<Box>
 			<MuiAppBar position="absolute">
@@ -371,9 +406,15 @@ function CollabLeet() {
 				>
 					<IconButton
 						sx={{ "&:hover": { color: "grey" } }}
-						onClick={(event) =>
-							window.location.replace(`/selection`)
-						}
+                        onClick={() => {
+                            socket.emit(
+                                "leave-match",
+                                sessionStorage.getItem("username")
+                            );
+                            console.log(sessionStorage.getItem("username"));
+                            sessionStorage.setItem("isSoloMode", "false");
+                            window.location.replace(`/selection`);
+                        }}
 					>
 						<ArrowBackIcon />
 					</IconButton>
@@ -385,7 +426,7 @@ function CollabLeet() {
 						sx={{ flexGrow: 1 }}
 						align="center"
 					>
-						PeerPrep Collaborative Page <code>{username}</code>
+                        PeerPrep for <code>{userName}</code>
 					</Typography>
 				</Toolbar>
 			</MuiAppBar>
@@ -520,13 +561,12 @@ function CollabLeet() {
 			<Box sx={{ pt: 2 }}>
 				<TextEditor />
             </Box>
+
             {/*Chat Messaging*/}
-            <Box sx={{ pt: 2 }}>
+            <Box sx={{ pt: 2, display: chatMessagingDisplay }}>
                 <div style={{
                     padding: "0",
                     margin: "0",
-                    //display: "flex",
-                    //justifycontent:"center",
                 }}>
                 <div>Chat Messaging</div>
                 <Card
@@ -559,6 +599,7 @@ function CollabLeet() {
                 </form>
                 </div>
             </Box>
+
 			<div
 				style={{
 					display: "flex",
