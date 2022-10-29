@@ -269,11 +269,6 @@ export async function getSoloRoom(req, res) {
     roomCounter++;
     return res.status(201).json({
         message: `Solo room requested. Solo room id is ${soloRoomSocketId}`,
-        //user1: currentUser,
-        //user2: pendingMatchUser,
-        //isPendingMatch: false,
-        //user1SocketId: currentUserSocketId,
-        //user2SocketId: pendingMatchUserSocketId,
         soloRoomSocketId: soloRoomSocketId,
     });
 }

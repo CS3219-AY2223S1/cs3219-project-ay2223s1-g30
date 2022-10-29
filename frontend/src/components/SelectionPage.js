@@ -252,7 +252,7 @@ const handleMatching = (socket, difficulty) => {
 			"Match found! Please wait for us to process you into the collab room."
 		);
 
-		// TRANSPORT USER TO ROOM! AKA COLLABLEET?
+		// TRANSPORT USER TO ROOM!
 		sessionStorage.setItem("collabRoomId", collabRoomId);
 		window.location.replace(`/collab`);
 	});
@@ -269,14 +269,11 @@ const handleSolo = (socket, difficulty) => {
     const username = sessionStorage.getItem("username");
     const userID = socket.id;
     socket.emit("solo-practice", username, difficulty, userID);
-    //alert("You have clicked solo!");
-    socket.on("solo-practice-success", (collabRoomId) => {
-        console.log("Now transferring to a solo practice room.");
-
-        console.log(collabRoomId);
+    socket.on("solo-practice-success", (roomId) => {
+        console.log(`Now transferring to a solo practice room. RoomId: ${roomId}`);
 
         // TRANSPORT USER TO ROOM
-        sessionStorage.setItem("collabRoomId", collabRoomId);
+        sessionStorage.setItem("collabRoomId", roomId);
         window.location.replace(`/collab`);
     });
 };
