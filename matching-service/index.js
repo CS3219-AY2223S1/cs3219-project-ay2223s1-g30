@@ -126,7 +126,7 @@ io.on("connection", (socket) => {
 		});
 	});
 
-    // For solo mode
+    // For solo practice mode
     socket.on('solo-practice', async (currentUser, difficulty, currentUserSocketId) => {
         console.log(`Solo practice request received: user ${currentUser}, difficulty ${difficulty}`);
 

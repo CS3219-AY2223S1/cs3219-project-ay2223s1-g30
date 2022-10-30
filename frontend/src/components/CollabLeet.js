@@ -24,7 +24,6 @@ import TextEditor from "./Collab/TextEditor.js";
 import MuiAppBar from "@mui/material/AppBar";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChatIcon from "@mui/icons-material/Chat";
-//import { socket } from "./services/socket";
 import { io } from "socket.io-client";
 
 function CollabLeet() {
@@ -99,10 +98,8 @@ function CollabLeet() {
             console.log("Finding question");
             var found = false;
             for (let i = 0; i < questions.length; i++) {
-                //console.log(questions);
                 if (questions[i].difficulty === difficulty) {
                     if (room === null) {
-                        //console.log("here");
                         if (difficulty === "easy") {
                             if (user.easy === undefined) {
                                 found = true;
@@ -374,7 +371,7 @@ function CollabLeet() {
         messageContainer.append(messageElement);
     }
 
-    // Used to hide messaging service in solo mode.
+    // Var used to hide messaging service in solo mode.
     var chatMessagingDisplay = "block";
     const isSoloMode = sessionStorage.getItem("isSoloMode");
     if ((isSoloMode != null) & (isSoloMode == "true")) {
