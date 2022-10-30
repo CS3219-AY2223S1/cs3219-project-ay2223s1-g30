@@ -99,10 +99,10 @@ function CollabLeet() {
             console.log("Finding question");
             var found = false;
             for (let i = 0; i < questions.length; i++) {
-                console.log(questions);
+                //console.log(questions);
                 if (questions[i].difficulty === difficulty) {
                     if (room === null) {
-                        console.log("here");
+                        //console.log("here");
                         if (difficulty === "easy") {
                             if (user.easy === undefined) {
                                 found = true;
