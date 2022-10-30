@@ -263,3 +263,12 @@ export async function getRoom(req, res) {
 		});
 	}
 }
+
+export async function getSoloRoom(req, res) {
+    const soloRoomSocketId = "Room " + roomCounter;
+    roomCounter++;
+    return res.status(201).json({
+        message: `Solo room requested. Solo room id is ${soloRoomSocketId}`,
+        soloRoomSocketId: soloRoomSocketId,
+    });
+}

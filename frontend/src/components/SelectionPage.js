@@ -23,12 +23,10 @@ import Person from "@mui/icons-material/Person";
 
 function SelectionPage() {
 	console.log("Attempting to connect");
-	// client-side
 	const [socketID, handleSocketID] = useState("");
 	const [difficulty, handleDifficulty] = useState("");
 	const username = sessionStorage.getItem("username");
 	useEffect(() => {
-		//socket.emit("HELLO_THERE");
 		socket.on("connect", () => {
 			console.log(
 				"Front-end connection to localhost:8001 socket successful."
@@ -252,16 +250,30 @@ const handleMatching = (socket, difficulty) => {
 			"Match found! Please wait for us to process you into the collab room."
 		);
 
-		// TRANSPORT USER TO ROOM! AKA COLLABLEET?
+		// Transport user to collab page
 		sessionStorage.setItem("collabRoomId", collabRoomId);
 		window.location.replace(`/collab`);
 	});
 };
 
-const handleSolo = (difficulty) => {
-	sessionStorage.setItem("difficulty", difficulty);
-	console.log("Selected Solo with Difficulty: " + difficulty);
-	alert("You have clicked solo!");
+const handleSolo = (socket, difficulty) => {
+    sessionStorage.setItem("difficulty", difficulty);
+    if (difficulty === "") {
+        difficulty = "easy";
+    }
+    console.log("Selected Solo with Difficulty: " + difficulty);
+    sessionStorage.setItem("isSoloMode", "true");
+
+    const username = sessionStorage.getItem("username");
+    const userID = socket.id;
+    socket.emit("solo-practice", username, difficulty, userID);
+    socket.on("solo-practice-success", (roomId) => {
+        console.log(`Now transferring to a solo practice room. RoomId: ${roomId}`);
+
+        // Transport user to collab page (solo mode)
+        sessionStorage.setItem("collabRoomId", roomId);
+        window.location.replace(`/collab`);
+    });
 };
 
 // Creation of timer
