@@ -268,20 +268,6 @@ function CollabLeet() {
         }
     };
 
-    // const findQuestionSolo = async () => {
-    // 	let randNum = Math.floor(Math.random() * questions.length);
-    // 	while (true) {
-    // 		if (questions[randNum].difficulty === difficulty) {
-    // 			break;
-    // 		} else {
-    // 			randNum = Math.floor(Math.random() * questions.length);
-    // 		}
-    // 	}
-    // 	setQuestion(questions[randNum]);
-    // 	sessionStorage.setItem("question", JSON.stringify(questions[randNum]));
-    // 	console.log("Got the question");
-    // };
-
     const findRoom = async () => {
         if (username !== "") {
             const endpoint = URL_MATCHING_SERVICE + "/" + username;
