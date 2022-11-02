@@ -37,7 +37,7 @@ function CollabLeet() {
 	const [user, setUser] = useState("");
 	const [partner, setPartner] = useState("");
 	const [room, setRoom] = useState("");
-
+    console.log("diff: " + sessionStorage.getItem("difficulty"));
     const getUser = async () => {
         if (username !== "") {
             const endpoint = URL_USER_SVC_DASHBOARD;
@@ -400,7 +400,7 @@ function CollabLeet() {
 							},
 						}}
 						onClick={(event) =>
-							window.location.replace(`/selection`)
+							window.location.replace(`/dashboard`)
 						}
 					>
 						<ArrowBackIcon />
@@ -436,7 +436,7 @@ function CollabLeet() {
 										boxShadow: '0 0 1px 1px rgba(0, 0, 0, 1)',
 										color:"black",}}>
 										<Typography variant="subtitle1">
-											{getShortDiff(difficulty)}
+											{getShortDiff(sessionStorage.getItem("difficulty"))}
 										</Typography>
 									</Avatar>
 								}
@@ -482,7 +482,6 @@ function CollabLeet() {
 									gutterBottom
 									sx={{ padding: "32px" }}
 									component="div">
-										{console.log(question.examples)}
 									{question
 										? question.examples
 										.map((example, index) => {
@@ -493,14 +492,19 @@ function CollabLeet() {
 											);
 										}): null}
 								</Typography>
+                                <Divider/>
+							    <Divider/>
 							<Typography
 								variant={"h5"}
 								gutterBottom
 								component="div"
+								textAlign = "center"
 								sx={{ pt: 2 }}
 							>
 								Constraints
 							</Typography>
+                            <Divider/>
+							<Divider/>
 								<Typography
 									variant={"body1"}
 									gutterBottom

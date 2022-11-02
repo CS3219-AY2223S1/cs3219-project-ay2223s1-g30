@@ -127,6 +127,9 @@ export default function TextEditor() {
 							);
                             console.log(sessionStorage.getItem("username"));
                             sessionStorage.setItem("isSoloMode", "false");
+
+							// Remove collabRoomID if leave room
+							sessionStorage.removeItem('collabRoomId');
 							window.location.replace(`/selection`);
 						}}
 					>
