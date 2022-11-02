@@ -15,13 +15,15 @@ app.options("*", cors());
 import {
 	createMatch,
 	deleteMatch,
-	getRoom,
+    getRoom,
+    getSoloRoom,
 } from "./controller/match-controller.js";
 
 const router = express.Router();
 
 router.get("/", (_, res) => res.send("Hello World from matching-service"));
 router.post("/", createMatch);
+router.post("/solo", getSoloRoom);
 router.delete("/:userID", deleteMatch);
 router.get("/:username", getRoom);
 
@@ -48,6 +50,7 @@ instrument(io, {
 httpServer.listen(8001);
 
 const URL_MATCH_SERVICE = "http://localhost:8001/api/match";
+const URL_SOLO_SERVICE = "http://localhost:8001/api/match/solo";
 
 const res = await axios.get(URL_MATCH_SERVICE);
 console.log(`Axios Test: ${res.data}`);
@@ -122,6 +125,32 @@ io.on("connection", (socket) => {
 			await DocumentModel.findByIdAndUpdate(documentId, { data });
 		});
 	});
+
+    // For solo practice mode
+    socket.on('solo-practice', async (currentUser, difficulty, currentUserSocketId) => {
+        console.log(`Solo practice request received: user ${currentUser}, difficulty ${difficulty}`);
+
+        const res = await axios
+            .post(URL_SOLO_SERVICE, {
+                difficulty,
+                currentUser,
+                currentUserSocketId,
+            })
+            .catch((err) => {
+                console.log(
+                    `Axios error in matching-service/index.js (solo-practice): ${err}`
+                );
+            });
+        console.log("Axios complete (solo-practice)");
+
+        if (res) {
+            console.log(res.data);
+            const roomId = res.data.soloRoomSocketId;
+            socket.emit("solo-practice-success", roomId);
+        } else {
+            console.log("Axios: No result data.");
+        }
+    })
 
 	//For collaboration text editor
 	socket.on("get-document", async (documentId) => {

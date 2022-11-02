@@ -125,7 +125,8 @@ export default function TextEditor() {
 								"leave-match",
 								sessionStorage.getItem("username")
 							);
-							console.log(sessionStorage.getItem("username"));
+                            console.log(sessionStorage.getItem("username"));
+                            sessionStorage.setItem("isSoloMode", "false");
 							window.location.replace(`/selection`);
 						}}
 					>
