@@ -8,6 +8,7 @@ import {
 	CardActionArea,
 	Grid,
 	IconButton,
+	Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
@@ -27,6 +28,17 @@ function SelectionPage() {
 	const [socketID, handleSocketID] = useState("");
 	const [difficulty, handleDifficulty] = useState("");
 	const username = sessionStorage.getItem("username");
+
+	// Not so good way of setting card selection, but workaround.
+	const [isActiveOne, setIsActiveOne] = useState(true);
+	const [isActiveTwo, setIsActiveTwo] = useState(false);
+	const [isActiveThree, setIsActiveThree] = useState(false);
+
+	const handleClick = (correctCard, disableCardOne, disableCardTwo) => {
+	  correctCard(true);
+	  disableCardOne(false);
+	  disableCardTwo(false);
+	};
 	useEffect(() => {
 		//socket.emit("HELLO_THERE");
 		socket.on("connect", () => {
@@ -93,9 +105,13 @@ function SelectionPage() {
 				sx={{ pt: 12, display: "flex", flexDirection: "row" }}
 			>
 				<Grid item md={4} lg={2}>
-					<Card>
-						<CardActionArea
-							onClick={() => handleDifficulty("easy")}
+					<Card style={{
+             			boxShadow: isActiveOne ?  '5px 5px grey': '',}}>
+						<CardActionArea        
+						onClick={() => {
+							handleDifficulty("easy")
+							handleClick(setIsActiveOne, setIsActiveTwo, setIsActiveThree);
+								}}
 						>
 							<CardContent>
 								<Typography
@@ -118,9 +134,12 @@ function SelectionPage() {
 					</Card>
 				</Grid>
 				<Grid item md={4} lg={2} xs>
-					<Card>
+				<Card style={{boxShadow: isActiveTwo ?  '5px 5px grey': ''}}>
 						<CardActionArea
-							onClick={() => handleDifficulty("medium")}
+						onClick={() => {
+							handleDifficulty("medium")
+							handleClick(setIsActiveTwo, setIsActiveOne, setIsActiveThree);
+								}}
 						>
 							<CardContent>
 								<Typography
@@ -143,9 +162,12 @@ function SelectionPage() {
 					</Card>
 				</Grid>
 				<Grid item md={4} lg={2} xs>
-					<Card>
+				<Card style={{boxShadow: isActiveThree ?  '5px 5px grey': ''}}>
 						<CardActionArea
-							onClick={() => handleDifficulty("hard")}
+						onClick={() => {
+							handleDifficulty("hard")
+							handleClick(setIsActiveThree, setIsActiveOne, setIsActiveTwo);
+								}}
 						>
 							<CardContent>
 								<Typography
@@ -174,7 +196,7 @@ function SelectionPage() {
 				alignItems="center"
 				display="flex"
 				flexDirection="row"
-				sx={{ pt: 12 }}
+				sx={{ pt: 12, pb: 2}}
 			>
 				<Grid sx={{ mr: 10 }}>
 					<Button
@@ -201,6 +223,7 @@ function SelectionPage() {
 						startIcon={<GroupsIcon />}
 						sx={{
 							color: "white",
+							paddingBottom: "10px",
 							":hover": {
 								bgcolor: "white",
 								color: "black",
@@ -249,7 +272,14 @@ const handleMatching = (socket, difficulty) => {
 	socket.on("matchSuccess", (collabRoomId) => {
 		clearTimeout(timer);
 		root.render(
-			"Match found! Please wait for us to process you into the collab room."
+			<Alert variant="outlined" severity="success" 
+			sx={{
+				width: '30%',
+				margin: 'auto',
+				padding: 'auto',
+			  }}>
+					 Match Successful! Please wait to get directed to your room!
+			</Alert>
 		);
 
 		// TRANSPORT USER TO ROOM! AKA COLLABLEET?
@@ -285,7 +315,16 @@ const handleTimeout = (root, userName, difficulty) => {
 			difficulty
 	);
 	socket.emit("leave-match", userName);
-	root.render("");
+	root.render(
+		<Alert variant="outlined" severity="error" 
+		sx={{
+			width: '30%',
+			margin: 'auto',
+			padding: 'auto',
+		  }}>
+  				Your 30 seconds is up! Try to match again!
+		</Alert>
+	);
 	alert("Match not found, please try again!");
 };
 
