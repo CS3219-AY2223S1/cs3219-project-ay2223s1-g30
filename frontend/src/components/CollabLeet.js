@@ -17,9 +17,9 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
-	URL_QUESTION_SVC,
-	URL_MATCHING_SERVICE,
-	URL_USER_SVC_DASHBOARD,
+    URL_QUESTION_SVC,
+    URL_MATCHING_SERVICE,
+    URL_USER_SVC_DASHBOARD,
 } from "../configs";
 import { STATUS_CODE_OKAY, STATUS_CODE_CONFLICT } from "../constants";
 import TextEditor from "./Collab/TextEditor.js";
@@ -27,9 +27,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChatIcon from '@mui/icons-material/Chat';
 import SendIcon from '@mui/icons-material/Send';
-//import { socket } from "./services/socket";
 import { io } from "socket.io-client";
-
 
 function CollabLeet() {
 	const [difficulty, setDifficulty] = useState("");
@@ -40,252 +38,289 @@ function CollabLeet() {
 	const [partner, setPartner] = useState("");
 	const [room, setRoom] = useState("");
 
-	const getUser = async () => {
-		if (username !== "") {
-			const endpoint = URL_USER_SVC_DASHBOARD;
-			const res = await axios
-				.post(endpoint, { username })
-				.catch((err) => {
-					if (err.status === STATUS_CODE_CONFLICT) {
-						console.log("User not found");
-					} else {
-						console.log("Please try again later");
-					}
-				});
-			if (res && res.status === STATUS_CODE_OKAY) {
-				setUser(res.data);
-				console.log("You successfully retrieved user1");
-			}
-		}
-	};
+    const getUser = async () => {
+        if (username !== "") {
+            const endpoint = URL_USER_SVC_DASHBOARD;
+            const res = await axios
+                .post(endpoint, { username })
+                .catch((err) => {
+                    if (err.status === STATUS_CODE_CONFLICT) {
+                        console.log("User not found");
+                    } else {
+                        console.log("Please try again later");
+                    }
+                });
+            if (res && res.status === STATUS_CODE_OKAY) {
+                setUser(res.data);
+                console.log("You successfully retrieved user1");
+            }
+        }
+    };
 
-	const getPartner = async () => {
-		if (room !== "") {
-			const endpoint = URL_USER_SVC_DASHBOARD;
-			const username1 = username === room.user1 ? room.user2 : room.user1;
-			console.log("Got partner:", username1);
-			const res = await axios
-				.post(endpoint, { username: username1 })
-				.catch((err) => {
-					console.log(err);
-					if (err.status === STATUS_CODE_CONFLICT) {
-						console.log("User not found");
-					} else {
-						console.log("Please try again later");
-					}
-				});
-			if (res && res.status === STATUS_CODE_OKAY) {
-				setPartner(res.data);
-				console.log("You successfully retrieved user2");
-			}
-		}
-	};
+    const getPartner = async () => {
+        if (room !== "") {
+            const endpoint = URL_USER_SVC_DASHBOARD;
+            const username1 = username === room.user1 ? room.user2 : room.user1;
+            console.log("Got partner:", username1);
+            const res = await axios
+                .post(endpoint, { username: username1 })
+                .catch((err) => {
+                    console.log(err);
+                    if (err.status === STATUS_CODE_CONFLICT) {
+                        console.log("User not found");
+                    } else {
+                        console.log("Please try again later");
+                    }
+                });
+            if (res && res.status === STATUS_CODE_OKAY) {
+                setPartner(res.data);
+                console.log("You successfully retrieved user2");
+            }
+        }
+    };
 
-	const getQuestions = async () => {
-		const endpoint = URL_QUESTION_SVC;
-		const res = await axios.get(endpoint).catch((err) => {
-			console.log("Please try again later");
-		});
-		setQuestions(res.data);
-		console.log("You successfully retrieved questions");
-	};
+    const getQuestions = async () => {
+        const endpoint = URL_QUESTION_SVC;
+        const res = await axios.get(endpoint).catch((err) => {
+            console.log("Please try again later");
+        });
+        setQuestions(res.data);
+        console.log("You successfully retrieved questions");
+    };
 
-	const findQuestion = async () => {
-		if (user !== "" && partner !== "" && questions !== "") {
-			for (let i = 0; i < questions.length; i++) {
-				console.log("Finding question");
-				if (questions[i].difficulty === difficulty) {
-					if (room === null) {
-						if (difficulty === "easy") {
-							setDifficulty("easy");
-							if (user.easy === undefined) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							} else if (!user.easy.includes(questions[i].id)) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							}
-						} else if (difficulty === "medium") {
-							setDifficulty("medium");
-							if (user.medium === undefined) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							} else if (!user.medium.includes(questions[i].id)) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							}
-						} else {
-							setDifficulty("hard");
-							if (user.difficult === undefined) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							} else if (
-								!user.difficult.includes(questions[i].id)
-							) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							}
-						}
-					} else {
-						if (difficulty === "easy") {
-							if (
-								user.easy === undefined &&
-								partner.easy === undefined
-							) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							} else if (
-								!user.easy.includes(questions[i].id) &&
-								!partner.easy.includes(questions[i].id)
-							) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							}
-						} else if (difficulty === "medium") {
-							if (
-								user.medium === undefined &&
-								partner.medium === undefined
-							) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							} else if (
-								!user.medium.includes(questions[i].id) &&
-								!partner.medium.includes(questions[i].id)
-							) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							}
-						} else {
-							if (
-								user.hard === undefined &&
-								partner.hard === undefined
-							) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							} else if (
-								!user.hard.includes(questions[i].id) &&
-								!partner.hard.includes(questions[i].id)
-							) {
-								setQuestion(questions[i]);
-								sessionStorage.setItem(
-									"question",
-									JSON.stringify(questions[i])
-								);
-								break;
-							}
-						}
-					}
-				}
-			}
-			console.log("Got the question");
-		}
-	};
+    const findQuestion = async () => {
+        if (user !== "" && partner !== "" && questions !== "") {
+            console.log("Finding question");
+            var found = false;
+            for (let i = 0; i < questions.length; i++) {
+                if (questions[i].difficulty === difficulty) {
+                    if (room === null) {
+                        if (difficulty === "easy") {
+                            if (user.easy === undefined) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            } else if (!user.easy.includes(questions[i].id)) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            }
+                        } else if (difficulty === "medium") {
+                            if (user.medium === undefined) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            } else if (!user.medium.includes(questions[i].id)) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            }
+                        } else {
+                            if (user.hard === undefined) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            } else if (!user.hard.includes(questions[i].id)) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            }
+                        }
+                    } else {
+                        if (difficulty === "easy") {
+                            if (
+                                user.easy === undefined &&
+                                partner.easy === undefined
+                            ) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            } else if (
+                                !user.easy.includes(questions[i].id) &&
+                                !partner.easy.includes(questions[i].id)
+                            ) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            }
+                        } else if (difficulty === "medium") {
+                            if (
+                                user.medium === undefined &&
+                                partner.medium === undefined
+                            ) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            } else if (
+                                !user.medium.includes(questions[i].id) &&
+                                !partner.medium.includes(questions[i].id)
+                            ) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            }
+                        } else {
+                            if (
+                                user.hard === undefined &&
+                                partner.hard === undefined
+                            ) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            } else if (
+                                !user.hard.includes(questions[i].id) &&
+                                !partner.hard.includes(questions[i].id)
+                            ) {
+                                found = true;
+                                setQuestion(questions[i]);
+                                sessionStorage.setItem(
+                                    "question",
+                                    JSON.stringify(questions[i])
+                                );
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                let randNum = Math.floor(Math.random() * questions.length);
+                if (room === null) {
+                    while (true) {
+                        if (questions[randNum].difficulty === difficulty) {
+                            break;
+                        } else {
+                            randNum = Math.floor(
+                                Math.random() * questions.length
+                            );
+                        }
+                    }
+                    setQuestion(questions[randNum]);
+                    sessionStorage.setItem(
+                        "question",
+                        JSON.stringify(questions[randNum])
+                    );
+                } else {
+                    for (let i = 0; i < questions.length; i++) {
+                        if (questions[i].difficulty === difficulty) {
+                            setQuestion(questions[i]);
+                            sessionStorage.setItem(
+                                "question",
+                                JSON.stringify(questions[i])
+                            );
+                        }
+                    }
+                }
+            }
+            console.log("Got the question");
+        }
+    };
 
-	const findRoom = async () => {
-		if (username !== "") {
-			const endpoint = URL_MATCHING_SERVICE + "/" + username;
-			const res = await axios.get(endpoint, { username }).catch((err) => {
-				if (err.status === STATUS_CODE_CONFLICT) {
-					setRoom(null);
-					setPartner(null);
-				} else {
-					console.log("Please try again later");
-				}
-			});
-			if (res && res.status === STATUS_CODE_OKAY) {
-				setRoom(res.data);
-				console.log("You successfully found the user's room");
-			}
-		}
-	};
+    const findRoom = async () => {
+        if (username !== "") {
+            const endpoint = URL_MATCHING_SERVICE + "/" + username;
+            const res = await axios.get(endpoint, { username }).catch((err) => {
+                if (err.response.status === STATUS_CODE_CONFLICT) {
+                    setRoom(null);
+                    setPartner(null);
+                } else {
+                    console.log("Please try again later");
+                }
+            });
+            if (res && res.status === STATUS_CODE_OKAY) {
+                setRoom(res.data);
+                console.log("You successfully found the user's room");
+            }
+        }
+    };
 
-	useEffect(() => {
-		async function init() {
-			console.log("No question");
-			try {
-				setUsername(sessionStorage.getItem("username"));
-				setDifficulty(sessionStorage.getItem("difficulty"));
-				if (user === "") {
-					await getUser();
-				}
-				if (room === "") {
-					await findRoom();
-				}
-				if (partner === "") {
-					await getPartner();
-				}
-				if (questions === "") {
-					await getQuestions();
-				}
-				if (question === "") {
-					findQuestion();
-				}
-			} catch (err) {
-				console.log(err);
-			}
-		}
-		if (question === "") {
-			if (sessionStorage.getItem("question") === null) {
-				init();
-			} else {
-				console.log(
-					"QUESTION:",
-					JSON.parse(sessionStorage.getItem("question"))
-				);
-				setQuestion(JSON.parse(sessionStorage.getItem("question")));
-				setDifficulty(sessionStorage.getItem("difficulty"));
-			}
-		}
+    useEffect(() => {
+        async function init() {
+            console.log("No question");
+            try {
+                setUsername(sessionStorage.getItem("username"));
+                setDifficulty(sessionStorage.getItem("difficulty"));
+                if (user === "") {
+                    await getUser();
+                }
+                if (room === "") {
+                    await findRoom();
+                }
+                if (partner === "") {
+                    await getPartner();
+                }
+                if (questions === "") {
+                    await getQuestions();
+                }
+                if (question === "") {
+                    findQuestion();
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        if (question === "") {
+            if (sessionStorage.getItem("question") === null) {
+                init();
+            } else {
+                console.log(
+                    "QUESTION:",
+                    JSON.parse(sessionStorage.getItem("question"))
+                );
+                setQuestion(JSON.parse(sessionStorage.getItem("question")));
+                console.log("Question:", question);
+            }
+        }
     });
 
     // Socket.io used for chat messaging
-    const messageContainer = document.getElementById('message-container');
-    const messageForm = document.getElementById('send-container');
-    const messageInput = document.getElementById('message-input');
+    const messageContainer = document.getElementById("message-container");
+    const messageForm = document.getElementById("send-container");
+    const messageInput = document.getElementById("message-input");
     const userName = sessionStorage.getItem("username");
     const collabRoomId = sessionStorage.getItem("collabRoomId");
 
@@ -293,7 +328,7 @@ function CollabLeet() {
     useEffect(() => {
         const s = io("http://localhost:8001");
         setSocket(s);
-        s.emit('new-user', userName, collabRoomId);
+        s.emit("new-user", userName, collabRoomId);
 
         return () => {
             s.disconnect();
@@ -302,35 +337,42 @@ function CollabLeet() {
 
     useEffect(() => {
         if (socket == null) return;
-        socket.on('user-connected', name => {
+        socket.on("user-connected", (name) => {
             appendMessage(`${name} connected`);
         });
     }, [socket]);
 
     useEffect(() => {
         if (socket == null) return;
-        socket.on('chat-message', data => {
+        socket.on("chat-message", (data) => {
             appendMessage(`${data.name}: ${data.message}`);
         });
     }, [socket]);
 
     useEffect(() => {
         if (socket == null) return;
-        messageForm.addEventListener('submit', e => {
+        messageForm.addEventListener("submit", (e) => {
             e.preventDefault();
             const message = messageInput.value;
             appendMessage(`You: ${message}`);
-            socket.emit('send-chat-message', message, userName, collabRoomId);
-            messageInput.value = '';
-        })
+            socket.emit("send-chat-message", message, userName, collabRoomId);
+            messageInput.value = "";
+        });
     }, [socket]);
 
     function appendMessage(message) {
-        const messageElement = document.createElement('div');
+        const messageElement = document.createElement("div");
         messageElement.innerText = message;
         messageContainer.append(messageElement);
     }
-
+    
+    // Var used to hide messaging service in solo mode.
+    var chatMessagingDisplay = "block";
+    const isSoloMode = sessionStorage.getItem("isSoloMode");
+    if ((isSoloMode != null) & (isSoloMode == "true")) {
+        chatMessagingDisplay = "none";
+    }
+    
 	function getShortDiff(difficulty) {
 		if(difficulty == "easy") {
 			return "E"

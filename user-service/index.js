@@ -20,6 +20,7 @@ import {
 	getProtectedMe,
 	logoutUser,
 	updateHistory,
+	getHistory,
 } from "./controller/user-controller.js";
 
 const router = express.Router();
@@ -35,6 +36,7 @@ router.get("/dashboard/", authProtect, getProtectedMe);
 router.post("/dashboard/", getMe);
 router.post("/logout", logoutUser);
 router.post("/history", updateHistory);
+router.get("/history/:username", getHistory);
 
 app.use("/api/user", router).all((_, res) => {
     res.setHeader("content-type", "application/json");
