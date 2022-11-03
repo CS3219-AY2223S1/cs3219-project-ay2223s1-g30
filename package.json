@@ -9,7 +9,7 @@
     "matching_install": "cd matching-service && npm install",
     "question_install": "cd question-service && npm install",
     "frontend_install": "cd frontend && npm install",
-    "postinstall": "concurrently \"npm run user_install\" \"npm run matching_install\" \"npm run question_install\" \"npm run frontend_install\""
+    "fullinstall": "concurrently \"npm run user_install\" \"npm run matching_install\" \"npm run question_install\" \"npm run frontend_install\""
   },
   "dependencies": {
     "@devexpress/dx-react-chart-material-ui": "^3.0.6",
