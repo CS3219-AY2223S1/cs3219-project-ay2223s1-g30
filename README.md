@@ -42,5 +42,6 @@ This is a template repository for CS3219 project.
 2. Run Frontend using `npm start`.
 
 ## Run entire Application
-1. Install all the packages by running `npm run fullinstall`.
-2. Run `npm run fullstart`
+1. Install packages in this folder by running `npm i`
+2. Install all the packages by running `npm run fullinstall`.
+3. Run `npm run fullstart`
