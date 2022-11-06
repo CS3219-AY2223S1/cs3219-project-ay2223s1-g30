@@ -240,11 +240,12 @@ function SelectionPage() {
 }
 
 const handleMatching = (socket, difficulty) => {
-	sessionStorage.setItem("difficulty", difficulty);
 	console.log("diff: " + difficulty);
 	if (difficulty === "") {
 		difficulty = "easy";
+		handleDifficulty(difficulty);
 	}
+	sessionStorage.setItem("difficulty", difficulty);
 	console.log(" Selected Matching with Difficulty: " + difficulty);
 
 	// Do a socket emit to match with another user
@@ -287,10 +288,11 @@ const handleMatching = (socket, difficulty) => {
 };
 
 const handleSolo = (socket, difficulty) => {
-    sessionStorage.setItem("difficulty", difficulty);
     if (difficulty === "") {
         difficulty = "easy";
+		handleDifficulty(difficulty);
     }
+	sessionStorage.setItem("difficulty", difficulty);
     console.log("Selected Solo with Difficulty: " + difficulty);
     sessionStorage.setItem("isSoloMode", "true");
 
