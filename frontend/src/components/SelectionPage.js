@@ -38,6 +38,75 @@ function SelectionPage() {
 	  disableCardOne(false);
 	  disableCardTwo(false);
 	};
+	const handleMatching = (socket, difficulty) => {
+		console.log("diff: " + difficulty);
+		if (difficulty === "") {
+			difficulty = "easy";
+			handleDifficulty(difficulty);
+		}
+		sessionStorage.setItem("difficulty", difficulty);
+		console.log(" Selected Matching with Difficulty: " + difficulty);
+	
+		// Do a socket emit to match with another user
+		const username = sessionStorage.getItem("username");
+		const userID = socket.id;
+		console.log(
+			"socket emit: match for: " +
+				username +
+				" queuing for difficulty: " +
+				difficulty
+		);
+		socket.emit("match", username, difficulty, userID);
+	
+		// Timer object on ReactDOM
+		let container = document.getElementById("timer");
+		let root = createRoot(container);
+	
+		// Timer for 30seconds timeout for socket.emit("match-failed")
+		let timerID = timer(root, username, difficulty);
+		root.render(<TimerDialog data-param={[true, timerID, socket, username]} />);
+	
+		// If get match-success, clearTimeout
+		socket.on("matchSuccess", (collabRoomId) => {
+			clearTimeout(timer);
+			root.render(
+				<Alert variant="outlined" severity="success" 
+				sx={{
+					width: '30%',
+					margin: 'auto',
+					padding: 'auto',
+				  }}>
+						 Match Successful! Please wait to get directed to your room!
+				</Alert>
+			);
+	
+			// Transport user to collab page
+			sessionStorage.setItem("collabRoomId", collabRoomId);
+			window.location.replace(`/collab`);
+		});
+	};
+	
+	const handleSolo = (socket, difficulty) => {
+		if (difficulty === "") {
+			difficulty = "easy";
+			handleDifficulty(difficulty);
+		}
+		sessionStorage.setItem("difficulty", difficulty);
+		console.log("Selected Solo with Difficulty: " + difficulty);
+		sessionStorage.setItem("isSoloMode", "true");
+	
+		const username = sessionStorage.getItem("username");
+		const userID = socket.id;
+		socket.emit("solo-practice", username, difficulty, userID);
+		socket.on("solo-practice-success", (roomId) => {
+			console.log(`Now transferring to a solo practice room. RoomId: ${roomId}`);
+	
+			// Transport user to collab page (solo mode)
+			sessionStorage.setItem("collabRoomId", roomId);
+			window.location.replace(`/collab`);
+		});
+	};
+	
 	useEffect(() => {
 		socket.on("connect", () => {
 			console.log(
@@ -239,74 +308,7 @@ function SelectionPage() {
 	);
 }
 
-const handleMatching = (socket, difficulty) => {
-	console.log("diff: " + difficulty);
-	if (difficulty === "") {
-		difficulty = "easy";
-		handleDifficulty(difficulty);
-	}
-	sessionStorage.setItem("difficulty", difficulty);
-	console.log(" Selected Matching with Difficulty: " + difficulty);
 
-	// Do a socket emit to match with another user
-	const username = sessionStorage.getItem("username");
-	const userID = socket.id;
-	console.log(
-		"socket emit: match for: " +
-			username +
-			" queuing for difficulty: " +
-			difficulty
-	);
-	socket.emit("match", username, difficulty, userID);
-
-	// Timer object on ReactDOM
-	let container = document.getElementById("timer");
-	let root = createRoot(container);
-
-	// Timer for 30seconds timeout for socket.emit("match-failed")
-	let timerID = timer(root, username, difficulty);
-	root.render(<TimerDialog data-param={[true, timerID, socket, username]} />);
-
-	// If get match-success, clearTimeout
-	socket.on("matchSuccess", (collabRoomId) => {
-		clearTimeout(timer);
-		root.render(
-			<Alert variant="outlined" severity="success" 
-			sx={{
-				width: '30%',
-				margin: 'auto',
-				padding: 'auto',
-			  }}>
-					 Match Successful! Please wait to get directed to your room!
-			</Alert>
-		);
-
-		// Transport user to collab page
-		sessionStorage.setItem("collabRoomId", collabRoomId);
-		window.location.replace(`/collab`);
-	});
-};
-
-const handleSolo = (socket, difficulty) => {
-    if (difficulty === "") {
-        difficulty = "easy";
-		handleDifficulty(difficulty);
-    }
-	sessionStorage.setItem("difficulty", difficulty);
-    console.log("Selected Solo with Difficulty: " + difficulty);
-    sessionStorage.setItem("isSoloMode", "true");
-
-    const username = sessionStorage.getItem("username");
-    const userID = socket.id;
-    socket.emit("solo-practice", username, difficulty, userID);
-    socket.on("solo-practice-success", (roomId) => {
-        console.log(`Now transferring to a solo practice room. RoomId: ${roomId}`);
-
-        // Transport user to collab page (solo mode)
-        sessionStorage.setItem("collabRoomId", roomId);
-        window.location.replace(`/collab`);
-    });
-};
 
 // Creation of timer
 const timer = (root, userName, difficulty) => {
