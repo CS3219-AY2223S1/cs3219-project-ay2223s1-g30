@@ -8,6 +8,7 @@ import {
 	CardActionArea,
 	Grid,
 	IconButton,
+	Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
@@ -26,6 +27,86 @@ function SelectionPage() {
 	const [socketID, handleSocketID] = useState("");
 	const [difficulty, handleDifficulty] = useState("");
 	const username = sessionStorage.getItem("username");
+
+	// Not so good way of setting card selection, but workaround.
+	const [isActiveOne, setIsActiveOne] = useState(true);
+	const [isActiveTwo, setIsActiveTwo] = useState(false);
+	const [isActiveThree, setIsActiveThree] = useState(false);
+
+	const handleClick = (correctCard, disableCardOne, disableCardTwo) => {
+	  correctCard(true);
+	  disableCardOne(false);
+	  disableCardTwo(false);
+	};
+	const handleMatching = (socket, difficulty) => {
+		console.log("diff: " + difficulty);
+		if (difficulty === "") {
+			difficulty = "easy";
+			handleDifficulty(difficulty);
+		}
+		sessionStorage.setItem("difficulty", difficulty);
+		console.log(" Selected Matching with Difficulty: " + difficulty);
+	
+		// Do a socket emit to match with another user
+		const username = sessionStorage.getItem("username");
+		const userID = socket.id;
+		console.log(
+			"socket emit: match for: " +
+				username +
+				" queuing for difficulty: " +
+				difficulty
+		);
+		socket.emit("match", username, difficulty, userID);
+	
+		// Timer object on ReactDOM
+		let container = document.getElementById("timer");
+		let root = createRoot(container);
+	
+		// Timer for 30seconds timeout for socket.emit("match-failed")
+		let timerID = timer(root, username, difficulty);
+		root.render(<TimerDialog data-param={[true, timerID, socket, username]} />);
+	
+		// If get match-success, clearTimeout
+		socket.on("matchSuccess", (collabRoomId) => {
+			clearTimeout(timer);
+			root.render(
+				<Alert variant="outlined" severity="success" 
+				sx={{
+					width: '30%',
+					margin: 'auto',
+					padding: 'auto',
+				  }}>
+						 Match Successful! Please wait to get directed to your room!
+				</Alert>
+			);
+	
+			// Transport user to collab page
+			sessionStorage.setItem("collabRoomId", collabRoomId);
+			window.location.replace(`/collab`);
+		});
+	};
+	
+	const handleSolo = (socket, difficulty) => {
+		if (difficulty === "") {
+			difficulty = "easy";
+			handleDifficulty(difficulty);
+		}
+		sessionStorage.setItem("difficulty", difficulty);
+		console.log("Selected Solo with Difficulty: " + difficulty);
+		sessionStorage.setItem("isSoloMode", "true");
+	
+		const username = sessionStorage.getItem("username");
+		const userID = socket.id;
+		socket.emit("solo-practice", username, difficulty, userID);
+		socket.on("solo-practice-success", (roomId) => {
+			console.log(`Now transferring to a solo practice room. RoomId: ${roomId}`);
+	
+			// Transport user to collab page (solo mode)
+			sessionStorage.setItem("collabRoomId", roomId);
+			window.location.replace(`/collab`);
+		});
+	};
+	
 	useEffect(() => {
 		socket.on("connect", () => {
 			console.log(
@@ -91,9 +172,13 @@ function SelectionPage() {
 				sx={{ pt: 12, display: "flex", flexDirection: "row" }}
 			>
 				<Grid item md={4} lg={2}>
-					<Card>
-						<CardActionArea
-							onClick={() => handleDifficulty("easy")}
+					<Card style={{
+             			boxShadow: isActiveOne ?  '5px 5px grey': '',}}>
+						<CardActionArea        
+						onClick={() => {
+							handleDifficulty("easy")
+							handleClick(setIsActiveOne, setIsActiveTwo, setIsActiveThree);
+								}}
 						>
 							<CardContent>
 								<Typography
@@ -116,9 +201,12 @@ function SelectionPage() {
 					</Card>
 				</Grid>
 				<Grid item md={4} lg={2} xs>
-					<Card>
+				<Card style={{boxShadow: isActiveTwo ?  '5px 5px grey': ''}}>
 						<CardActionArea
-							onClick={() => handleDifficulty("medium")}
+						onClick={() => {
+							handleDifficulty("medium")
+							handleClick(setIsActiveTwo, setIsActiveOne, setIsActiveThree);
+								}}
 						>
 							<CardContent>
 								<Typography
@@ -141,9 +229,12 @@ function SelectionPage() {
 					</Card>
 				</Grid>
 				<Grid item md={4} lg={2} xs>
-					<Card>
+				<Card style={{boxShadow: isActiveThree ?  '5px 5px grey': ''}}>
 						<CardActionArea
-							onClick={() => handleDifficulty("hard")}
+						onClick={() => {
+							handleDifficulty("hard")
+							handleClick(setIsActiveThree, setIsActiveOne, setIsActiveTwo);
+								}}
 						>
 							<CardContent>
 								<Typography
@@ -172,7 +263,7 @@ function SelectionPage() {
 				alignItems="center"
 				display="flex"
 				flexDirection="row"
-				sx={{ pt: 12 }}
+				sx={{ pt: 12, pb: 2}}
 			>
 				<Grid sx={{ mr: 10 }}>
 					<Button
@@ -199,6 +290,7 @@ function SelectionPage() {
 						startIcon={<GroupsIcon />}
 						sx={{
 							color: "white",
+							paddingBottom: "10px",
 							":hover": {
 								bgcolor: "white",
 								color: "black",
@@ -216,65 +308,7 @@ function SelectionPage() {
 	);
 }
 
-const handleMatching = (socket, difficulty) => {
-	sessionStorage.setItem("difficulty", difficulty);
-	console.log("diff: " + difficulty);
-	if (difficulty === "") {
-		difficulty = "easy";
-	}
-	console.log(" Selected Matching with Difficulty: " + difficulty);
 
-	// Do a socket emit to match with another user
-	const username = sessionStorage.getItem("username");
-	const userID = socket.id;
-	console.log(
-		"socket emit: match for: " +
-			username +
-			" queuing for difficulty: " +
-			difficulty
-	);
-	socket.emit("match", username, difficulty, userID);
-
-	// Timer object on ReactDOM
-	let container = document.getElementById("timer");
-	let root = createRoot(container);
-
-	// Timer for 30seconds timeout for socket.emit("match-failed")
-	let timerID = timer(root, username, difficulty);
-	root.render(<TimerDialog data-param={[true, timerID, socket, username]} />);
-
-	// If get match-success, clearTimeout
-	socket.on("matchSuccess", (collabRoomId) => {
-		clearTimeout(timer);
-		root.render(
-			"Match found! Please wait for us to process you into the collab room."
-		);
-
-		// Transport user to collab page
-		sessionStorage.setItem("collabRoomId", collabRoomId);
-		window.location.replace(`/collab`);
-	});
-};
-
-const handleSolo = (socket, difficulty) => {
-    sessionStorage.setItem("difficulty", difficulty);
-    if (difficulty === "") {
-        difficulty = "easy";
-    }
-    console.log("Selected Solo with Difficulty: " + difficulty);
-    sessionStorage.setItem("isSoloMode", "true");
-
-    const username = sessionStorage.getItem("username");
-    const userID = socket.id;
-    socket.emit("solo-practice", username, difficulty, userID);
-    socket.on("solo-practice-success", (roomId) => {
-        console.log(`Now transferring to a solo practice room. RoomId: ${roomId}`);
-
-        // Transport user to collab page (solo mode)
-        sessionStorage.setItem("collabRoomId", roomId);
-        window.location.replace(`/collab`);
-    });
-};
 
 // Creation of timer
 const timer = (root, userName, difficulty) => {
@@ -297,7 +331,16 @@ const handleTimeout = (root, userName, difficulty) => {
 			difficulty
 	);
 	socket.emit("leave-match", userName);
-	root.render("");
+	root.render(
+		<Alert variant="outlined" severity="error" 
+		sx={{
+			width: '30%',
+			margin: 'auto',
+			padding: 'auto',
+		  }}>
+  				Your 30 seconds is up! Try to match again!
+		</Alert>
+	);
 	alert("Match not found, please try again!");
 };
 

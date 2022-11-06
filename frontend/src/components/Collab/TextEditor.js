@@ -100,13 +100,18 @@ export default function TextEditor() {
 	}, []);
 	return (
 		<div>
-			<div className="container" ref={wrapperRef}></div>
+			<div className="container" 
+					style={{
+						height: "69.35vh",
+					}}
+					ref={wrapperRef}></div>
 			<div
+			
 				style={{
 					display: "flex",
 					justifyContent: "center",
 					alignItems: "center",
-					marginTop: "20px",
+					marginTop: "100px",
 					marginBottom: "20px",
 				}}
 			>
@@ -122,6 +127,9 @@ export default function TextEditor() {
 							);
                             console.log(sessionStorage.getItem("username"));
                             sessionStorage.setItem("isSoloMode", "false");
+
+							// Remove collabRoomID if leave room
+							sessionStorage.removeItem('collabRoomId');
 							window.location.replace(`/selection`);
 						}}
 					>

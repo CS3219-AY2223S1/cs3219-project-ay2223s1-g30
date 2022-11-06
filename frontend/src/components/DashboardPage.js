@@ -474,9 +474,15 @@ function Dashboard() {
 												marginTop: "2rem",
 											}} 
 											onClick={(event) =>
-												window.location.replace(
-													`/selection`
-												)
+												{
+													const collabId = sessionStorage.getItem("collabRoomId");
+													if (collabId === null) {
+														window.location.replace(`/selection`);
+													} else {
+														window.location.replace(`/collab`);
+													}
+													
+												}
 											}>
 											Start PeerPrep Now!
 										</Button>
