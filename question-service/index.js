@@ -3,7 +3,7 @@ import cors from "cors";
 
 const app = express();
 const endpoint = process.env.PORT || 8002;
-const frontendEndpoint = process.env.FRONTEND_ENDPOINT || "http://localhost:3000"
+const frontendEndpoint =  "https://cs3219-g30-peerprep-test.netlify.app";
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ credentials: true, origin: frontendEndpoint })); // config cors so that front-end can use
