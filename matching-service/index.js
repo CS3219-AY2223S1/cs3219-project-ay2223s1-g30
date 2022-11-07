@@ -8,6 +8,7 @@ import DocumentModel from "./model/document-model.js";
 
 const app = express();
 const endpoint = process.env.PORT || 8001;
+const frontendEndpoint = process.env.FRONTEND_ENDPOINT || "http://localhost:3000"
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
@@ -37,7 +38,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
 	/* socket.io options */
 	cors: {
-		origin: ["https://admin.socket.io", endpoint],
+		origin: ["https://admin.socket.io", frontendEndpoint],
 		credentials: true,
 	},
 });

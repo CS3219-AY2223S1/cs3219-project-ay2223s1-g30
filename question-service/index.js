@@ -3,9 +3,10 @@ import cors from "cors";
 
 const app = express();
 const endpoint = process.env.PORT || 8002;
+const frontendEndpoint = process.env.FRONTEND_ENDPOINT || "http://localhost:3000"
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
+app.use(cors({ credentials: true, origin: frontendEndpoint })); // config cors so that front-end can use
 app.options("*", cors());
 
 
