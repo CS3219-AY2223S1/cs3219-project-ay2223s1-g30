@@ -534,16 +534,14 @@ function CollabLeet() {
 					<Box sx={{ pt: 2 }}>
 						<TextEditor />
 					</Box>
-				</Grid>
-				<Grid item xs>
+                </Grid>
+                <Grid item xs display={chatMessagingDisplay}>
 					{/*Chat Messaging*/}
 					
 					<Box sx={{ pt: 2 }}>
 					<div style={{
 						padding: "0",
 						margin: "0",
-						// display: "flex",
-						// justifycontent:"center",
 					}}>
 					<Card
 						variant="outlined"
