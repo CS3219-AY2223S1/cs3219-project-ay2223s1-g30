@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import { authProtect } from "./middleware/authMiddleware.js";
 
 const app = express();
-const endpoint = process.env.PORT;
+const endpoint = process.env.PORT || 8000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
@@ -44,4 +44,4 @@ app.use("/api/user", router).all((_, res) => {
     //res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 });
 
-app.listen(8000, () => console.log("user-service listening on port 8000"));
+app.listen(endpoint, () => console.log("user-service listening on port 8000"));
