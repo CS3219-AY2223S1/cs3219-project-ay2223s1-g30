@@ -1,9 +1,7 @@
-export const URI_USER_SVC = process.env.URI_USER_SVC || "http://localhost:8000";
-export const URI_MATCHING_SVC =
-	process.env.URI_MATCHING_SVC || "http://localhost:8001";
-export const URI_QUESTION_SVC =
-	process.env.URI_QUESTION_SVC || "http://localhost:8002";
-export const URI_FRONTEND_SVC = process.env.URI_FRONTEND_SVC || "http://localhost:3000";
+export const URI_USER_SVC = "https://cs3219-user-service.herokuapp.com";
+export const URI_MATCHING_SVC = "https://cs3219-matching-service.herokuapp.com";
+export const URI_QUESTION_SVC = "https://cs3219-question-service.herokuapp.com";
+export const URI_FRONTEND_SVC = "https://cs3219-g30-peerprep-test.netlify.app";
 
 const PREFIX_MATCHING_SVC = "/api/match";
 const PREFIX_QUESTION_SVC = "/api/question";
