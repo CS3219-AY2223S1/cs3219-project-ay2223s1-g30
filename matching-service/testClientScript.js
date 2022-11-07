@@ -1,6 +1,8 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8001");
+const URL_MATCH = process.env.URI_MATCH || "http://localhost:8001";
+
+const socket = io(URL_MATCH);
 
 socket.on("connect", () => {
 	console.log(`I am connected via socket id: ${socket.id}`);

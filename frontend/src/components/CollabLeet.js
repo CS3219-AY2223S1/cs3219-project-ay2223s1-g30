@@ -20,6 +20,7 @@ import {
     URL_QUESTION_SVC,
     URL_MATCHING_SERVICE,
     URL_USER_SVC_DASHBOARD,
+    URI_MATCHING_SVC,
 } from "../configs";
 import { STATUS_CODE_OKAY, STATUS_CODE_CONFLICT } from "../constants";
 import TextEditor from "./Collab/TextEditor.js";
@@ -326,7 +327,7 @@ function CollabLeet() {
 
     const [socket, setSocket] = useState();
     useEffect(() => {
-        const s = io("http://localhost:8001");
+        const s = io(URI_MATCHING_SVC);
         setSocket(s);
         s.emit("new-user", userName, collabRoomId);
 

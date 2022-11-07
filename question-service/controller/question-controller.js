@@ -25,31 +25,37 @@ export async function mapQuestionsDone(req, res) {
 		let history = [];
 		let temp;
 
-		for (let i = 0; i < easyQuestions.length; i++) {
-			temp = await _mapQuestion(easyQuestions[i]);
-			history.push({
-				'ProblemID': temp.id,
-				'ProblemName': temp.title,
-				'Difficulty': "Easy"
-			});
+		if (easyQuestions !== undefined) {
+			for (let i = 0; i < easyQuestions.length; i++) {
+				temp = await _mapQuestion(easyQuestions[i]);
+				history.push({
+					'ProblemID': temp.id,
+					'ProblemName': temp.title,
+					'Difficulty': "Easy"
+				});
+			}
 		}
 
-		for (let i = 0; i < mediumQuestions.length; i++) {
-			temp = await _mapQuestion(mediumQuestions[i]);
-			history.push({
-				'ProblemID': temp.id,
-				'ProblemName': temp.title,
-				'Difficulty': "Medium"
-			});
+		if (mediumQuestions !== undefined) {
+			for (let i = 0; i < mediumQuestions.length; i++) {
+				temp = await _mapQuestion(mediumQuestions[i]);
+				history.push({
+					'ProblemID': temp.id,
+					'ProblemName': temp.title,
+					'Difficulty': "Medium"
+				});
+			}
 		}
 
-		for (let i = 0; i < hardQuestions.length; i++) {
-			temp = await _mapQuestion(hardQuestions[i]);
-			history.push({
-				'ProblemID': temp.id,
-				'ProblemName': temp.title,
-				'Difficulty': "Hard"
-			});
+		if (hardQuestions !== undefined) {
+			for (let i = 0; i < hardQuestions.length; i++) {
+				temp = await _mapQuestion(hardQuestions[i]);
+				history.push({
+					'ProblemID': temp.id,
+					'ProblemName': temp.title,
+					'Difficulty': "Hard"
+				});
+			}
 		}
 		return res.status(200).json(history);
 	} catch (err) {

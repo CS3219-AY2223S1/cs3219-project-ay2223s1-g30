@@ -4,6 +4,7 @@ import "quill/dist/quill.snow.css";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import { Button, ButtonGroup } from "@mui/material";
+import { URI_MATCHING_SVC } from "../../configs";
 
 const TOOLBAR_OPTIONS = [
 	[{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -23,7 +24,7 @@ export default function TextEditor() {
 	const [quill, setQuill] = useState();
 
 	useEffect(() => {
-		const s = io("http://localhost:8001");
+		const s = io(URI_MATCHING_SVC);
 		setSocket(s);
 
 		return () => {
