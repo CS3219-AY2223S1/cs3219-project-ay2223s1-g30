@@ -41,8 +41,7 @@ router.get("/history/:username", getHistory);
 
 app.use("/api/user", router).all((_, res) => {
     res.setHeader("content-type", "application/json");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    //res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.setHeader("Access-Control-Allow-Origin", frontendEndpoint);
 });
 
 app.listen(endpoint, () => console.log("user-service listening on port 8000"));
