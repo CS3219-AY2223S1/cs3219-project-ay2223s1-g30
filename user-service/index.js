@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(cors({ credentials: true, origin: frontendEndpoint })); // config cors so that front-end can use
 app.options("*", cors());
 app.use(cookieParser());
+app.set("trust proxy", 1);
 
 import {
 	createUser,
