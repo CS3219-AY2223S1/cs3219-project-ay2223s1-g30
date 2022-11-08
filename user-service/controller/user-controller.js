@@ -190,7 +190,7 @@ export async function getMe(req, res) {
 		} else {
 			const token = generateToken(user._id);
 			res.cookie("token", token, { 
-				httpOnly: true.
+				httpOnly: true,
 				domain: "https://cs3219-g30-peerprep-test.netlify.app/"
 			});
 			return res.status(200).json({
