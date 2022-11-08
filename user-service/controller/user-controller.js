@@ -121,7 +121,7 @@ export async function loginUser(req, res) {
 			if (user && (await bcrypt.compare(password, user.password))) {
 				const token = generateToken(user._id);
 				res.cookie("token", token, { 
-					domain: "https://cs3219-g30-peerprep-test.netlify.app/"
+					domain: "https://cs3219-g30-peerprep-test.netlify.app"
 				});
 				res.status(200).json({
 					_id: user.id,
@@ -189,7 +189,7 @@ export async function getMe(req, res) {
 		} else {
 			const token = generateToken(user._id);
 			res.cookie("token", token, { 
-				domain: "https://cs3219-g30-peerprep-test.netlify.app/"
+				domain: "https://cs3219-g30-peerprep-test.netlify.app"
 			});
 			return res.status(200).json({
 				_id: user.id,
