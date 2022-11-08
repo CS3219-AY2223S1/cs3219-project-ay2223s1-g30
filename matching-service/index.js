@@ -7,7 +7,7 @@ import axios from "axios";
 import DocumentModel from "./model/document-model.js";
 
 const app = express();
-const endpoint = process.env.PORT;
+const endpoint = process.env.PORT || 8001;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
@@ -47,7 +47,7 @@ instrument(io, {
 	auth: false,
 });
 
-httpServer.listen(8001);
+httpServer.listen(endpoint);
 
 const URL_MATCH_SERVICE = "http://localhost:8001/api/match";
 const URL_SOLO_SERVICE = "http://localhost:8001/api/match/solo";
