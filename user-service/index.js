@@ -9,7 +9,7 @@ const frontendEndpoint =  "https://cs3219-g30-peerprep-test.netlify.app";
 const userServiceEndpoint = "https://cs3219-user-service.herokuapp.com";
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({ credentials: true, origin: userServiceEndpoint })); // config cors so that front-end can use
+app.use(cors({ credentials: true, origin: frontendEndpoint })); // config cors so that front-end can use
 app.options("*", cors());
 app.use(cookieParser());
 
