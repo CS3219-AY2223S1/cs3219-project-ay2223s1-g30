@@ -6,9 +6,10 @@ import { authProtect } from "./middleware/authMiddleware.js";
 const app = express();
 const endpoint = process.env.PORT || 8000;
 const frontendEndpoint =  "https://cs3219-g30-peerprep-test.netlify.app";
+const userServiceEndpoint = "https://cs3219-user-service.herokuapp.com";
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({ credentials: true, origin: frontendEndpoint })); // config cors so that front-end can use
+app.use(cors({ credentials: true, origin: userServiceEndpoint })); // config cors so that front-end can use
 app.options("*", cors());
 app.use(cookieParser());
 
@@ -41,7 +42,7 @@ router.get("/history/:username", getHistory);
 
 app.use("/api/user", router).all((_, res) => {
     res.setHeader("content-type", "application/json");
-    res.setHeader("Access-Control-Allow-Origin", frontendEndpoint);
+	res.setHeader("Access-Control-Allow-Origin", "*");
 });
 
 app.listen(endpoint, () => console.log("user-service listening on port 8000"));
