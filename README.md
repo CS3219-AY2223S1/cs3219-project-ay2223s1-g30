@@ -1,10 +1,10 @@
-# CS3219-AY22-23-Project-Skeleton
+# CS3219-AY22-23-PeerPrep-G30
 
-This is a template repository for CS3219 project.
+This is a repository for AY22/23 CS3219 project for G30.
 
 ## User Service
 
-1. Create a `.env` file.
+1. In the `user-service` subdirectory, create a `.env` file.
 2. Create a Cloud DB URL using Mongo Atlas.
 3. Enter the CLOUD DB URL created as `DB_CLOUD_URI` in `.env` file.
 4. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
@@ -15,7 +15,7 @@ This is a template repository for CS3219 project.
 
 ## Matching Service
 
-1. Create a `.env` file.
+1. In the `matching-service` subdirectory, create a `.env` file.
 2. Enter the CLOUD DB URL created as `DB_CLOUD_URI` in `.env` file.
 3. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
 4. Enter `ENV=DEV` in `.env` file.
@@ -24,7 +24,7 @@ This is a template repository for CS3219 project.
 
 ## Question Service
 
-1. Create a `.env` file.
+1. In the `question-service` subdirectory, create a `.env` file.
 2. Enter the CLOUD DB URL created as `DB_CLOUD_URI` in `.env` file.
 3. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
 4. Enter `ENV=DEV` in `.env` file.
@@ -35,10 +35,11 @@ This is a template repository for CS3219 project.
 
 ## Frontend
 
-1. Install npm packages using `npm i`.
+1. In the `frontend` subdirectory, install npm packages using `npm i`.
 2. Run Frontend using `npm start`.
 
 ## Run entire Application
-1. Install packages in this folder by running `npm i`
-2. Install all the packages by running `npm run fullinstall`.
-3. Run `npm run fullstart`
+1. Create the Cloud DB URL, all the `.env` files in the relevant subdirectories, and upload the `questions.json` as instructed above.
+2. Install packages in the repo root by running `npm i`
+3. Install all the packages by running `npm run fullinstall` in the repo root.
+4. Run `npm run fullstart` in the repo root.
