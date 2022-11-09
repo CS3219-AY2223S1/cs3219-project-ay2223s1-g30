@@ -10,9 +10,8 @@ This is a template repository for CS3219 project.
 4. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
 5. Enter `ENV=DEV` in `.env` file.
 6. Enter `JWT_SECRET=anystringyouwant` in `.env` file.
-7. Enter `PORT=http://localhost:3000` in `.env` file.
-8. Install npm packages using `npm i`.
-9. Run User Service using `npm run dev`.
+7. Install npm packages using `npm i`.
+8. Run User Service using `npm run dev`.
 
 ## Matching Service
 
@@ -20,9 +19,8 @@ This is a template repository for CS3219 project.
 2. Enter the CLOUD DB URL created as `DB_CLOUD_URI` in `.env` file.
 3. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
 4. Enter `ENV=DEV` in `.env` file.
-5. Enter `PORT=http://localhost:3000` in `.env` file.
-6. Install npm packages using `npm i`.
-7. Run Matching Service using `npm run dev`.
+5. Install npm packages using `npm i`.
+6. Run Matching Service using `npm run dev`.
 
 ## Question Service
 
@@ -30,11 +28,10 @@ This is a template repository for CS3219 project.
 2. Enter the CLOUD DB URL created as `DB_CLOUD_URI` in `.env` file.
 3. Enter the LOCAL DB URL as `DB_LOCAL_URI` in `.env` file.
 4. Enter `ENV=DEV` in `.env` file.
-5. Enter `PORT=http://localhost:3000` in `.env` file.
-6. In the database, create a collection name `questions`.
-7. Upload the `questions.json` file into the collection named `questions`.
-8. Install npm packages using `npm i`.
-9. Run Question Service using `npm run dev`.
+5. In the database, create a collection name `questions`.
+6. Upload the `questions.json` file into the collection named `questions`.
+7. Install npm packages using `npm i`.
+8. Run Question Service using `npm run dev`.
 
 ## Frontend
 
