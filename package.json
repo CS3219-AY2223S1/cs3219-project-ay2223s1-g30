@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "user_start": "cd user-service && nodemon index.js",
+    "matching_start": "cd matching-service && nodemon index.js",
+    "question_start": "cd question-service && nodemon index.js",
+    "frontend_start": "cd frontend && npm start",
+    "fullstart": "concurrently \"npm run user_start\" \"npm run matching_start\" \"npm run question_start\" \"npm run frontend_start\"",
+    "user_install": "cd user-service && npm install",
+    "matching_install": "cd matching-service && npm install",
+    "question_install": "cd question-service && npm install",
+    "frontend_install": "cd frontend && npm install",
+    "fullinstall": "concurrently \"npm run user_install\" \"npm run matching_install\" \"npm run question_install\" \"npm run frontend_install\""
+  },
+  "dependencies": {
+    "@devexpress/dx-react-chart-material-ui": "^3.0.6",
+    "concurrently": "^7.5.0",
+    "cookie-parser": "^1.4.6",
+    "nodemon": "^2.0.20",
+    "react-icons": "^4.4.0"
+  }
+}
