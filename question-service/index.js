@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
-const endpoint = process.env.PORT;
+const endpoint = process.env.PORT || 8002;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ credentials: true, origin: endpoint })); // config cors so that front-end can use
@@ -24,4 +24,4 @@ app.use("/api", router).all((_, res) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 });
 
-app.listen(8002, () => console.log("question-service listening on port 8002"));
+app.listen(endpoint, () => console.log("question-service listening on port 8002"));
